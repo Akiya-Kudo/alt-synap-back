@@ -1,28 +1,11 @@
 const { ApolloServer, gql } = require('apollo-server');
 
+const { loadSchemaSync, GraphQLFileLoader, addResolversToSchema } = require('graphql-tools');
+
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
-const typeDefs = gql`
-    type Book {
-        title: String
-        author: Author
-    }
-    
-    type Author {
-        name: String
-        books: [Book]
-    }
-
-    type Query {
-        books: [Book]
-        authors: [Author]
-    }
-
-    type Mutation {
-        addBook(title: String, author: String): Book
-    }
-`;
+const typeDefs = loadSchemaSync(path.resolve(__dirname, './graph/schema.graphql'), { loaders: [new GraphQLFileLoader()] });
 
 const books = [
     {
@@ -50,6 +33,7 @@ const resolvers = {
     authors: () => author,
     },
 };
+
 
 const {
     ApolloServerPluginLandingPageLocalDefault
