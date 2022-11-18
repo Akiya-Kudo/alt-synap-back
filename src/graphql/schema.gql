@@ -1,0 +1,15 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Query {
+  AllUsers: [UserModel]
+}
+
+type UserModel {
+  comment: String
+  firebase_id: String
+  photo_url: String
+  pinterest_user_id: String
+  user_name: String
+}
