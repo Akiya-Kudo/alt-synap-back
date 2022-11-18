@@ -7,7 +7,7 @@ import {
   Delete,
   Put,
 } from '@nestjs/common';
-import { UserService } from './prisma/user/user.service';
+import { UserService } from './user/user.service';
 import { users as UserModel, users } from '@prisma/client';
 import { profType } from 'type/UserType';
 
