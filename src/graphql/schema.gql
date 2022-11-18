@@ -3,14 +3,13 @@
 # ------------------------------------------------------
 
 type Query {
-  usersAll: [UserModel!]
+  AllUsers: [UserModel]
 }
 
 type UserModel {
-  comment: String!
+  comment: String
   firebase_id: String
-  photo_url: String!
-  pinterest_user_id: String!
-  user_name: String!
+  photo_url: String
+  pinterest_user_id: String
+  user_name: String
 }
-

@@ -6,8 +6,9 @@ import { UserService } from './user.service';
 export class UserResolver {
   constructor(private userService: UserService) {}
 
-  @Query(() => [UserModel], { name: 'usersAll', nullable: true })
+  @Query(() => [UserModel], { name: 'AllUsers', nullable: 'itemsAndList' })
   async usersAll() {
-    return this.userService.usersAll;
+    console.log(this.userService.usersAll());
+    return this.userService.usersAll();
   }
 }

@@ -31,8 +31,17 @@ export class UserService {
     });
   }
 
-  async usersAll(): Promise<any> {
+  usersAll() {
     return this.prisma.users.findMany();
+    // return [
+    //   {
+    //     firebase_id: 'aaa',
+    //     user_name: 'akiya',
+    //     photo_url: 'https',
+    //     cmment: 'helo',
+    //     pinterest_user_id: 'hthndfbanalb',
+    //   },
+    // ];
   }
 
   async createUser(data: Prisma.usersCreateInput): Promise<users> {

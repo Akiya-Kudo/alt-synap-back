@@ -29,7 +29,7 @@ export class AppController {
     });
   }
   @Get('usersAll')
-  async getUsers(): Promise<undefined> {
+  async getUsers(): Promise<any> {
     return this.userService.usersAll();
   }
 

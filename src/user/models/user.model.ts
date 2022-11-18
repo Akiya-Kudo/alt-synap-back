@@ -5,15 +5,15 @@ export class UserModel {
   @Field({ nullable: true })
   firebase_id: string;
 
-  @Field()
+  @Field({ nullable: true })
   user_name: string;
 
-  @Field()
+  @Field({ nullable: true })
   photo_url: string;
 
-  @Field()
+  @Field({ nullable: true })
   comment: string;
 
-  @Field()
+  @Field({ nullable: true })
   pinterest_user_id: string;
 }
