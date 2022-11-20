@@ -4,6 +4,7 @@
 
 type Query {
   AllUsers: [UserModel]
+  user(firebase_id: String!): UserModel
 }
 
 type UserModel {

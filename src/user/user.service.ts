@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../_prisma/prisma.service';
 import { users, Prisma } from '@prisma/client';
 
 @Injectable()
@@ -31,17 +31,8 @@ export class UserService {
     });
   }
 
-  usersAll() {
+  async usersAll() {
     return this.prisma.users.findMany();
-    // return [
-    //   {
-    //     firebase_id: 'aaa',
-    //     user_name: 'akiya',
-    //     photo_url: 'https',
-    //     cmment: 'helo',
-    //     pinterest_user_id: 'hthndfbanalb',
-    //   },
-    // ];
   }
 
   async createUser(data: Prisma.usersCreateInput): Promise<users> {
@@ -59,9 +50,7 @@ export class UserService {
     });
   }
 
-  async deleteUser(
-    where: Prisma.usersWhereUniqueInput,
-  ): Promise<Prisma.usersWhereUniqueInput> {
+  async deleteUser(where: Prisma.usersWhereUniqueInput): Promise<users> {
     return this.prisma.users.delete({
       where,
     });
