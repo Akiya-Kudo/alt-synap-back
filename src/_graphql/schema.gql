@@ -2,6 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Mutation {
+  registerUser(firebase_id: String!): UserModel!
+}
+
 type Query {
   AllUsers: [UserModel]
   user(firebase_id: String!): UserModel
