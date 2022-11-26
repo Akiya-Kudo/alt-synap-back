@@ -4,6 +4,7 @@
 
 type Mutation {
   registerUser(firebase_id: String!): UserModel!
+  updateUserInfo(updateUserInfoData: updateUserInfoInput!): UserModel!
 }
 
 type Query {
@@ -14,6 +15,14 @@ type Query {
 type UserModel {
   comment: String
   firebase_id: String
+  photo_url: String
+  pinterest_user_id: String
+  user_name: String
+}
+
+input updateUserInfoInput {
+  comment: String
+  firebase_id: String!
   photo_url: String
   pinterest_user_id: String
   user_name: String
