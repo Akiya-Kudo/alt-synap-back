@@ -3,7 +3,7 @@
 # ------------------------------------------------------
 
 type Mutation {
-  registerUser(firebase_id: String!): UserModel!
+  registerUser(createUserInfoData: createUserInfoInput!): UserModel!
   updateUserInfo(updateUserInfoData: updateUserInfoInput!): UserModel!
 }
 
@@ -17,6 +17,11 @@ type UserModel {
   firebase_id: String
   photo_url: String
   pinterest_user_id: String
+  user_name: String
+}
+
+input createUserInfoInput {
+  firebase_id: String!
   user_name: String
 }
 
