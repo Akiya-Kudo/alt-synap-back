@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { updateUserInfoInput, UserModel } from './user.model';
+import { createUserInfoInput, updateUserInfoInput, UserModel } from './user.model';
 import { UserService } from './user.service';
 
 @Resolver()
@@ -17,9 +17,9 @@ export class UserResolver {
   }
 
   @Mutation(() => UserModel)
-  async registerUser(@Args('firebase_id') firebase_id: string) {
-    console.log(firebase_id);
-    return this.userService.createUser({ firebase_id });
+  async registerUser(@Args('createUserInfoData') createUserInfoData: createUserInfoInput) {
+    console.log(createUserInfoData.firebase_id);
+    return this.userService.createUser({ firebase_id: createUserInfoData.firebase_id, user_name: createUserInfoData.user_name });
   }
 
   @Mutation(() => UserModel)

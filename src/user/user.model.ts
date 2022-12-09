@@ -35,3 +35,12 @@ export class updateUserInfoInput {
   @Field({ nullable: true })
   photo_url: string;
 }
+
+@InputType()
+export class createUserInfoInput {
+  @Field()
+  firebase_id: string;
+
+  @Field({ nullable: true })
+  user_name: string;
+}
