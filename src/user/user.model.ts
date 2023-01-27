@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class UserModel {
@@ -14,8 +14,11 @@ export class UserModel {
   @Field({ nullable: true })
   comment: string;
 
-  @Field({ nullable: true })
-  pinterest_user_id: string;
+  @Field(type => Int)
+  followee_num: number;
+
+  @Field(type => Int)
+  follower_num: number;
 }
 
 @InputType()
@@ -28,9 +31,6 @@ export class updateUserInfoInput {
 
   @Field({ nullable: true })
   comment: string;
-
-  @Field({ nullable: true })
-  pinterest_user_id: string;
 
   @Field({ nullable: true })
   photo_url: string;

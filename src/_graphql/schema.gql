@@ -15,8 +15,9 @@ type Query {
 type UserModel {
   comment: String
   firebase_id: String
+  followee_num: Int!
+  follower_num: Int!
   photo_url: String
-  pinterest_user_id: String
   user_name: String
 }
 
@@ -29,6 +30,5 @@ input updateUserInfoInput {
   comment: String
   firebase_id: String!
   photo_url: String
-  pinterest_user_id: String
   user_name: String
 }
