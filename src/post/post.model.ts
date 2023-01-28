@@ -1,8 +1,8 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class PostModel {
-  @Field(() => Int, { nullable: true })
+  @Field( type => Int )
   pid: number;
 
   @Field({ nullable: true })
@@ -12,17 +12,23 @@ export class PostModel {
   title: string;
 
   @Field({ nullable: true })
-  top_image_link: string;
+  top_image_url: string;
 
   @Field({ nullable: true })
-  top_link: string;
+  top_link_url: string;
 
-  @Field(() => Int, { nullable: true })
+  @Field( type => Int, { nullable: true })
   content_type: number;
 
-  @Field(() => Int, { nullable: true })
+  @Field( type => Int, { nullable: true })
   likes_num: number;
 
-  @Field({ nullable: true })
-  at_time: string;
+  @Field( type => GraphQLISODateTime, { nullable: true })
+  update_time: Date;
+
+  @Field( type => Boolean, { nullable: true })
+  publish: boolean;
+
+  @Field( type => Boolean, { nullable: true })
+  deleted: boolean;
 }

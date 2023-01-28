@@ -2,8 +2,8 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class CommentModel {
-  @Field(() => Int, { nullable: true })
-  id: number;
+  @Field(() => Int)
+  cid: number;
 
   @Field(() => Int, { nullable: true })
   pid: number;
@@ -12,5 +12,5 @@ export class CommentModel {
   uid: string;
 
   @Field({ nullable: true })
-  comment: string;
+  comment_content: string;
 }
