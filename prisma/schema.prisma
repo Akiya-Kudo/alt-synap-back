@@ -46,7 +46,7 @@ model posts {
   top_link_url   String?         @db.VarChar
   content_type   Int             @db.SmallInt
   likes_num      Int             @default(0)
-  update_time    DateTime        @db.Timestamptz(6)
+  update_time    DateTime        @db.Timestamp(6)
   publish        Boolean
   deleted        Boolean
   users          users           @relation(fields: [uid], references: [firebase_id], onDelete: NoAction, onUpdate: NoAction, map: "user_to_posts")
