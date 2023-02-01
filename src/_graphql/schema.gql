@@ -17,6 +17,7 @@ type UserModel {
   firebase_id: String!
   followee_num: Int
   follower_num: Int
+  lang_type: Int
   photo_url: String
   user_name: String
 }
@@ -29,6 +30,7 @@ input createUserInfoInput {
 input updateUserInfoInput {
   comment: String
   firebase_id: String!
+  lang_type: Int
   photo_url: String
   user_name: String
 }

@@ -53,6 +53,7 @@ model posts {
   blog_contents  blog_contents?
   comments       comments[]
   likes          likes[]
+  memo_contents  memo_contents?
   posts_tags     posts_tags[]
   slide_contents slide_contents?
 }
@@ -90,9 +91,16 @@ model users {
   user_name                          String?    @db.VarChar(50)
   follower_num                       Int        @default(0)
   followee_num                       Int        @default(0)
+  lang_type                          Int        @default(0) @db.SmallInt
   comments                           comments[]
   follows_follows_followee_idTousers follows[]  @relation("follows_followee_idTousers")
   follows_follows_follower_idTousers follows[]  @relation("follows_follower_idTousers")
   likes                              likes[]
   posts                              posts[]
+}
+
+model memo_contents {
+  pid     Int    @id
+  content String @db.VarChar
+  posts   posts  @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "pid_from_posts")
 }
