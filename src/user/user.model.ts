@@ -22,6 +22,9 @@ export class UserModel {
 
   @Field(type => Int, { nullable: true })
   follower_num: number;
+
+  @Field( type => Int, { nullable: true })
+  lang_type: number;
 }
 
 @InputType()
@@ -37,6 +40,9 @@ export class updateUserInfoInput {
 
   @Field({ nullable: true })
   photo_url: string;
+
+  @Field( type => Int, { nullable: true })
+  lang_type: number;
 }
 
 @InputType()

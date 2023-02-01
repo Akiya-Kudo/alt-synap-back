@@ -33,6 +33,7 @@ export class UserResolver {
         comment: updateUserInfoData.comment,
         user_name: updateUserInfoData.user_name,
         photo_url: updateUserInfoData.photo_url,
+        lang_type: updateUserInfoData.lang_type,
       },
     });
   }
