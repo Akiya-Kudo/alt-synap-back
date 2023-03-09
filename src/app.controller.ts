@@ -9,7 +9,14 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user/user.service';
 import { users as UserModel, users } from '@prisma/client';
-import { profType } from 'type/UserType';
+
+type profType = {
+  firebase_id?: null | string;
+  user_name?: null | string;
+  photo_url?: null | string;
+  comment?: null | string;
+  pinterest_user_id?: null | string;
+};
 
 @Controller()
 export class AppController {

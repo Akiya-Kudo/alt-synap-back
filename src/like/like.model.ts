@@ -3,7 +3,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class LikeModel {
   @Field(() => Int )
-  like_id: number;
+  lid: number;
 
   @Field(() => Int, { nullable: true })
   pid: number;

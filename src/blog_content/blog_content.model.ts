@@ -5,6 +5,6 @@ export class Blog_contentModel {
   @Field(() => Int)
   pid: number;
 
-  @Field({ nullable: true })
-  content: string;
+  @Field( type => JSON, { nullable: true })
+  content: object;
 }

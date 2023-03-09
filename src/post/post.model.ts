@@ -6,16 +6,19 @@ export class PostModel {
   pid: number;
 
   @Field({ nullable: true })
+  pid_uuid: string;
+
+  @Field({ nullable: true })
   uid: string;
 
   @Field({ nullable: true })
   title: string;
 
   @Field({ nullable: true })
-  top_image_url: string;
+  top_image: string;
 
   @Field({ nullable: true })
-  top_link_url: string;
+  top_link: string;
 
   @Field( type => Int, { nullable: true })
   content_type: number;
