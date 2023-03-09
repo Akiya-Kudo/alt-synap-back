@@ -8,99 +8,70 @@ datasource db {
 }
 
 model blog_contents {
-  pid     Int    @id
-  content String
-  posts   posts  @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "post_to_blog_content")
-}
-
-model comments {
-  cid             BigInt @id @default(autoincrement())
-  pid             Int
-  uid             String @db.VarChar(28)
-  comment_content String @db.VarChar(300)
-  users           users  @relation(fields: [uid], references: [firebase_id], onDelete: NoAction, onUpdate: NoAction, map: "firebase_id_to_uid")
-  posts           posts  @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "posts_to_pid")
-}
-
-model follows {
-  follow_id                        BigInt @id @default(autoincrement())
-  followee_id                      String @db.VarChar(28)
-  follower_id                      String @db.VarChar(28)
-  users_follows_followee_idTousers users  @relation("follows_followee_idTousers", fields: [followee_id], references: [firebase_id], onDelete: NoAction, onUpdate: NoAction, map: "users_to_followee")
-  users_follows_follower_idTousers users  @relation("follows_follower_idTousers", fields: [follower_id], references: [firebase_id], onDelete: NoAction, onUpdate: NoAction, map: "users_to_follower")
+  pid     Int   @id
+  content Json
+  posts   posts @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "post_to_blog_content")
 }
 
 model likes {
-  like_id BigInt @id @default(autoincrement())
-  pid     Int
-  uid     String @db.VarChar(28)
-  users   users  @relation(fields: [uid], references: [firebase_id], onDelete: NoAction, onUpdate: NoAction, map: "firebase_id_to_uid")
-  posts   posts  @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "pid_to_pid")
+  lid   Int    @id @default(autoincrement())
+  pid   Int
+  uid   String @db.VarChar(28)
+  users users  @relation(fields: [uid], references: [firebase_id], onDelete: NoAction, onUpdate: NoAction, map: "firebase_id_to_uid")
+  posts posts  @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "pid_to_pid")
 }
 
 model posts {
-  pid            Int             @id @default(autoincrement())
-  uid            String          @db.VarChar(28)
-  title          String          @db.VarChar(60)
-  top_image_url  String?         @db.VarChar
-  top_link_url   String?         @db.VarChar
-  content_type   Int             @db.SmallInt
-  likes_num      Int             @default(0)
-  update_time    DateTime        @db.Timestamp(6)
-  publish        Boolean
-  deleted        Boolean
-  users          users           @relation(fields: [uid], references: [firebase_id], onDelete: NoAction, onUpdate: NoAction, map: "user_to_posts")
-  blog_contents  blog_contents?
-  comments       comments[]
-  likes          likes[]
-  memo_contents  memo_contents?
-  posts_tags     posts_tags[]
-  slide_contents slide_contents?
-}
-
-model posts_tags {
-  post_tag_id BigInt @id @default(autoincrement())
-  pid         Int
-  tid         Int
-  posts       posts  @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "posts_to_posttag")
-  tags        tags   @relation(fields: [tid], references: [tid], onDelete: NoAction, onUpdate: NoAction, map: "tags_to_posttag")
-}
-
-model slide_contents {
-  pid                Int     @id
-  order_num          Int     @db.SmallInt
-  youtube_link_url   String? @db.VarChar
-  instagram_link_url String? @db.VarChar
-  image_url          String? @db.VarChar
-  slide_content_type Int     @db.SmallInt
-  memo               String  @db.VarChar(1000)
-  posts              posts   @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "post_to_slide_contents")
+  pid             Int              @id @default(autoincrement())
+  uid             String           @db.VarChar(28)
+  title           String           @db.VarChar(60)
+  top_image       String?          @db.VarChar
+  top_link        String?          @db.VarChar
+  content_type    Int              @db.SmallInt
+  likes_num       Int              @default(0)
+  update_time     DateTime         @db.Timestamp(6)
+  publish         Boolean          @default(false)
+  deleted         Boolean          @default(false)
+  pid_uuid        String           @db.Uuid
+  users           users            @relation(fields: [uid], references: [firebase_id], onDelete: NoAction, onUpdate: NoAction, map: "user_to_posts")
+  blog_contents   blog_contents?
+  likes           likes[]
+  post_tags       post_tags[]
+  source_contents source_contents?
 }
 
 model tags {
-  tid             Int          @id @default(autoincrement())
-  tag_name        String       @db.VarChar(20)
-  tag_content_num Int          @default(0)
-  posts_tags      posts_tags[]
+  tid             Int         @id @default(autoincrement())
+  tag_name        String      @db.VarChar(30)
+  tag_content_num Int         @default(0)
+  post_tags       post_tags[]
 }
 
 model users {
-  firebase_id                        String     @id @db.VarChar(28)
-  photo_url                          String?    @db.VarChar
-  comment                            String?    @db.VarChar(150)
-  user_name                          String?    @db.VarChar(50)
-  follower_num                       Int        @default(0)
-  followee_num                       Int        @default(0)
-  lang_type                          Int        @default(0) @db.SmallInt
-  comments                           comments[]
-  follows_follows_followee_idTousers follows[]  @relation("follows_followee_idTousers")
-  follows_follows_follower_idTousers follows[]  @relation("follows_follower_idTousers")
-  likes                              likes[]
-  posts                              posts[]
+  firebase_id  String  @id @db.VarChar(28)
+  photo_url    String? @db.VarChar
+  comment      String? @db.VarChar(150)
+  user_name    String? @db.VarChar(50)
+  follower_num Int     @default(0)
+  followee_num Int     @default(0)
+  lang_type    Int     @default(0) @db.SmallInt
+  color_mode   Int     @default(0) @db.SmallInt
+  likes        likes[]
+  posts        posts[]
 }
 
-model memo_contents {
-  pid     Int    @id
-  content String @db.VarChar
-  posts   posts  @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "pid_from_posts")
+model post_tags {
+  post_tag_id Int   @id(map: "posts_tags_pkey") @default(autoincrement())
+  pid         Int
+  tid         Int
+  posts       posts @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "posts_to_posttag")
+  tags        tags  @relation(fields: [tid], references: [tid], onDelete: NoAction, onUpdate: NoAction, map: "tags_to_posttag")
+}
+
+model source_contents {
+  pid         Int     @id(map: "slide_contents_pkey")
+  source_link String? @db.VarChar
+  source_type Int     @db.SmallInt
+  description Json
+  posts       posts   @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "post_to_slide_contents")
 }

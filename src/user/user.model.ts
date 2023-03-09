@@ -1,11 +1,11 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
 
 // modelでのnullableは一括してID以外にオプションとしてつけています。処理を記述していき、不具合が主じたらその度変更していきます。
 // リレーションを親に子のオブジェクトの配列を持たせることで表示させます。
 
 @ObjectType()
-export class UserModel {
-  @Field()
+export class User {
+  @Field( type => ID)
   firebase_id: string;
 
   @Field({ nullable: true })
@@ -25,6 +25,9 @@ export class UserModel {
 
   @Field( type => Int, { nullable: true })
   lang_type: number;
+
+  @Field( type => Int, { nullable: true })
+  color_mode: number;
 }
 
 @InputType()

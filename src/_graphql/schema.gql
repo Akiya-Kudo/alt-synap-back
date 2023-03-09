@@ -8,8 +8,8 @@ type Mutation {
 }
 
 type Query {
-  AllUsers: [UserModel]
   user(firebase_id: String!): UserModel
+  users_all: [UserModel]
 }
 
 type UserModel {
