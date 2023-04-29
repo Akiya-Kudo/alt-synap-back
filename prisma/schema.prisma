@@ -7,12 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model blog_contents {
-  pid     Int   @id
-  content Json
-  posts   posts @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "post_to_blog_content")
-}
-
 model likes {
   lid   Int    @id @default(autoincrement())
   pid   Int
@@ -22,22 +16,22 @@ model likes {
 }
 
 model posts {
-  pid             Int              @id @default(autoincrement())
-  uid             String           @db.VarChar(28)
-  title           String           @db.VarChar(60)
-  top_image       String?          @db.VarChar
-  top_link        String?          @db.VarChar
-  content_type    Int              @db.SmallInt
-  likes_num       Int              @default(0)
-  update_time     DateTime         @db.Timestamp(6)
-  publish         Boolean          @default(false)
-  deleted         Boolean          @default(false)
-  pid_uuid        String           @db.Uuid
-  users           users            @relation(fields: [uid], references: [firebase_id], onDelete: NoAction, onUpdate: NoAction, map: "user_to_posts")
-  blog_contents   blog_contents?
-  likes           likes[]
-  post_tags       post_tags[]
-  source_contents source_contents?
+  pid              Int               @id @default(autoincrement())
+  uid              String            @db.VarChar(28)
+  title            String            @db.VarChar(60)
+  top_image        String?           @db.VarChar
+  top_link         String?           @db.VarChar
+  content_type     Int               @db.SmallInt
+  likes_num        Int               @default(0)
+  update_time      DateTime          @db.Timestamp(6)
+  publish          Boolean           @default(false)
+  deleted          Boolean           @default(false)
+  pid_uuid         String            @db.Uuid
+  users            users             @relation(fields: [uid], references: [firebase_id], onDelete: NoAction, onUpdate: NoAction, map: "user_to_posts")
+  article_contents article_contents?
+  likes            likes[]
+  post_tags        post_tags[]
+  source_contents  source_contents?
 }
 
 model tags {
@@ -74,4 +68,10 @@ model source_contents {
   source_type Int     @db.SmallInt
   description Json
   posts       posts   @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "post_to_slide_contents")
+}
+
+model article_contents {
+  pid     Int   @id(map: "blog_contents_pkey")
+  content Json
+  posts   posts @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "post_to_blog_content")
 }
