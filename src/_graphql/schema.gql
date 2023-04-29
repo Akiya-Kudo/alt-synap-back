@@ -3,18 +3,19 @@
 # ------------------------------------------------------
 
 type Mutation {
-  registerUser(createUserInfoData: createUserInfoInput!): UserModel!
-  updateUserInfo(updateUserInfoData: updateUserInfoInput!): UserModel!
+  registerUser(createUserInfoData: createUserInfoInput!): User!
+  updateUserInfo(updateUserInfoData: updateUserInfoInput!): User!
 }
 
 type Query {
-  user(firebase_id: String!): UserModel
-  users_all: [UserModel]
+  user(firebase_id: String!): User
+  users_all: [User]
 }
 
-type UserModel {
+type User {
+  color_mode: Int
   comment: String
-  firebase_id: String!
+  firebase_id: ID!
   followee_num: Int
   follower_num: Int
   lang_type: Int
