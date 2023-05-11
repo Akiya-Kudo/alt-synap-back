@@ -1,4 +1,6 @@
 import { Field, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { Like } from 'src/like/like.model';
+import { Post } from 'src/post/post.model';
 
 // modelでのnullableは一括してID以外にオプションとしてつけています。処理を記述していき、不具合が主じたらその度変更していきます。
 // リレーションを親に子のオブジェクトの配列を持たせることで表示させます。
@@ -17,10 +19,10 @@ export class User {
   @Field({ nullable: true })
   comment: string;
 
-  @Field(type => Int, {nullable: true})
+  @Field( type => Int, { nullable: true})
   followee_num: number;
 
-  @Field(type => Int, { nullable: true })
+  @Field( type => Int, { nullable: true })
   follower_num: number;
 
   @Field( type => Int, { nullable: true })
@@ -28,11 +30,17 @@ export class User {
 
   @Field( type => Int, { nullable: true })
   color_mode: number;
+
+  @Field( type => [Post], { nullable: true })
+  posts: Post[];
+
+  @Field( type => [Like], { nullable: true })
+  likes: Like[];
 }
 
 @InputType()
 export class updateUserInfoInput {
-  @Field()
+  @Field( type => ID)
   firebase_id: string;
 
   @Field({ nullable: true })
@@ -50,7 +58,7 @@ export class updateUserInfoInput {
 
 @InputType()
 export class createUserInfoInput {
-  @Field()
+  @Field( type => ID)
   firebase_id: string;
 
   @Field({ nullable: true })
