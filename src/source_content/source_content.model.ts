@@ -1,8 +1,10 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { GraphQLJSONObject } from 'graphql-scalars';
+import { Post } from 'src/post/post.model';
 
 @ObjectType()
-export class Source_content {
-  @Field(() => Int)
+export class SourceContent {
+  @Field( type => ID)
   pid: number;
 
   @Field({ nullable: true })
@@ -11,6 +13,9 @@ export class Source_content {
   @Field(type => Int, { nullable: true })
   source_type: number;
 
-  @Field( type => JSON, { nullable: true })
-  description: object;
+  @Field( type => GraphQLJSONObject, { nullable: true })
+  description: JSON;
+
+  @Field( type => SourceContent, { nullable: true })
+  source_contents: SourceContent;
 }

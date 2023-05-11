@@ -1,8 +1,13 @@
-import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { ArticleContent } from 'src/article_content/article_content.model';
+import { Like } from 'src/like/like.model';
+import { PostTag } from 'src/posts_tag/posts_tag.model';
+import { SourceContent } from 'src/source_content/source_content.model';
+import { User } from 'src/user/user.model';
 
 @ObjectType()
-export class PostModel {
-  @Field( type => Int )
+export class Post {
+  @Field( type => ID )
   pid: number;
 
   @Field({ nullable: true })
@@ -34,4 +39,46 @@ export class PostModel {
 
   @Field( type => Boolean, { nullable: true })
   deleted: boolean;
+
+
+  @Field( type => User, { nullable: true })
+  users: User
+
+  @Field( type => ArticleContent, { nullable: true })
+  article_contents: ArticleContent;
+
+  @Field( type => SourceContent, { nullable: true })
+  source_contents: SourceContent;
+
+
+  @Field( type => [PostTag], {nullable: true })
+  post_tags: PostTag[];
+
+  @Field( type => [Like], { nullable: true })
+  likes: Like[];
+}
+
+
+@InputType()
+export class createPostInput {
+  @Field( type => ID)
+  uid: string;
+
+  @Field()
+  title: string;
+
+  @Field({ nullable: true })
+  top_image: string;
+
+  @Field({ nullable: true })
+  top_link: string;
+
+  @Field( type => Int )
+  content_type: number;
+
+  @Field( type => Boolean)
+  publish: boolean;
+
+  @Field( type => [String], { nullable: "items" })
+  tag_names: [String]
 }

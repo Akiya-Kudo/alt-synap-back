@@ -2,14 +2,81 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type ArticleContent {
+  content: JSONObject
+  pid: Int!
+  posts: Post
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type Like {
+  lid: ID!
+  pid: ID
+  posts: Post
+  uid: String
+  users: User
+}
+
 type Mutation {
+  createPost(createPost: createPostInput!): Post!
   registerUser(createUserInfoData: createUserInfoInput!): User!
   updateUserInfo(updateUserInfoData: updateUserInfoInput!): User!
+}
+
+type Post {
+  article_contents: ArticleContent
+  content_type: Int
+  deleted: Boolean
+  likes: [Like!]
+  likes_num: Int
+  pid: ID!
+  pid_uuid: String
+  post_tags: [PostTag!]
+  publish: Boolean
+  source_contents: SourceContent
+  title: String
+  top_image: String
+  top_link: String
+  uid: String
+  update_time: DateTime
+  users: User
+}
+
+type PostTag {
+  id: ID!
+  pid: ID
+  posts: Post
+  tags: Tag
+  tid: ID
 }
 
 type Query {
   user(firebase_id: String!): User
   users_all: [User]
+}
+
+type SourceContent {
+  description: JSONObject
+  pid: ID!
+  source_contents: SourceContent
+  source_link: String
+  source_type: Int
+}
+
+type Tag {
+  post_tags: [PostTag!]
+  tag_content_num: Int
+  tag_name: String
+  tid: ID!
 }
 
 type User {
@@ -19,18 +86,30 @@ type User {
   followee_num: Int
   follower_num: Int
   lang_type: Int
+  likes: [Like!]
   photo_url: String
+  posts: [Post!]
   user_name: String
 }
 
+input createPostInput {
+  content_type: Int!
+  publish: Boolean!
+  tag_names: [String]!
+  title: String!
+  top_image: String
+  top_link: String
+  uid: ID!
+}
+
 input createUserInfoInput {
-  firebase_id: String!
+  firebase_id: ID!
   user_name: String
 }
 
 input updateUserInfoInput {
   comment: String
-  firebase_id: String!
+  firebase_id: ID!
   lang_type: Int
   photo_url: String
   user_name: String
