@@ -27,9 +27,9 @@ type Like {
 }
 
 type Mutation {
-  createPost(createPost: createPostInput!): Post!
   registerUser(createUserInfoData: createUserInfoInput!): User!
   updateUserInfo(updateUserInfoData: updateUserInfoInput!): User!
+  upsertPost(upsertPostValue: upsertPostInput!): Post!
 }
 
 type Post {
@@ -67,7 +67,7 @@ type Query {
 type SourceContent {
   description: JSONObject
   pid: ID!
-  source_contents: SourceContent
+  posts: Post
   source_link: String
   source_type: Int
 }
@@ -92,16 +92,6 @@ type User {
   user_name: String
 }
 
-input createPostInput {
-  content_type: Int!
-  publish: Boolean!
-  tag_names: [String]!
-  title: String!
-  top_image: String
-  top_link: String
-  uid: ID!
-}
-
 input createUserInfoInput {
   firebase_id: ID!
   user_name: String
@@ -113,4 +103,17 @@ input updateUserInfoInput {
   lang_type: Int
   photo_url: String
   user_name: String
+}
+
+input upsertPostInput {
+  content: JSONObject
+  content_type: Int!
+  deleted: Boolean!
+  pid_uuid: ID!
+  publish: Boolean!
+  tag_names: [String!]!
+  title: String!
+  top_image: String
+  top_link: String
+  uid: ID!
 }

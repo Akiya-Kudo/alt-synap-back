@@ -16,6 +16,6 @@ export class SourceContent {
   @Field( type => GraphQLJSONObject, { nullable: true })
   description: JSON;
 
-  @Field( type => SourceContent, { nullable: true })
-  source_contents: SourceContent;
+  @Field( type => Post, { nullable: true })
+  posts: Post;
 }
