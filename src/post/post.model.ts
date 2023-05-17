@@ -57,28 +57,3 @@ export class Post {
   @Field( type => [Like], { nullable: true })
   likes: Like[];
 }
-
-
-@InputType()
-export class createPostInput {
-  @Field( type => ID)
-  uid: string;
-
-  @Field()
-  title: string;
-
-  @Field({ nullable: true })
-  top_image: string;
-
-  @Field({ nullable: true })
-  top_link: string;
-
-  @Field( type => Int )
-  content_type: number;
-
-  @Field( type => Boolean)
-  publish: boolean;
-
-  @Field( type => [String], { nullable: "items" })
-  tag_names: [String]
-}

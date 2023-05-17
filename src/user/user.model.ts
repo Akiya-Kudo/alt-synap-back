@@ -37,30 +37,3 @@ export class User {
   @Field( type => [Like], { nullable: true })
   likes: Like[];
 }
-
-@InputType()
-export class updateUserInfoInput {
-  @Field( type => ID)
-  firebase_id: string;
-
-  @Field({ nullable: true })
-  user_name: string;
-
-  @Field({ nullable: true })
-  comment: string;
-
-  @Field({ nullable: true })
-  photo_url: string;
-
-  @Field( type => Int, { nullable: true })
-  lang_type: number;
-}
-
-@InputType()
-export class createUserInfoInput {
-  @Field( type => ID)
-  firebase_id: string;
-
-  @Field({ nullable: true })
-  user_name: string;
-}
