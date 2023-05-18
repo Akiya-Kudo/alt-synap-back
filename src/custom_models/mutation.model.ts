@@ -1,13 +1,14 @@
 import { Field, ID, InputType, Int } from "@nestjs/graphql";
 import { GraphQLJSONObject } from "graphql-scalars";
+import { User } from "src/user/user.model";
 
 @InputType()
-export class upsertPostInput {
+export class upsertArticlePostInput {
     @Field( type => ID)
-    uid: string;
+    uuid_uid: string;
 
     @Field( type => ID)
-    pid_uuid: string;
+    uuid_pid: string;
 
     @Field()
     title: string;
@@ -35,28 +36,28 @@ export class upsertPostInput {
 }
 
 @InputType()
-export class updateUserInfoInput {
+export class updateUserInput {
     @Field( type => ID)
-    firebase_id: string;
+    uid: string;
 
-    @Field({ nullable: true })
-    user_name: string;
-
+    @Field( type => ID )
+    uuid_uid: string;
+    
     @Field({ nullable: true })
     comment: string;
-
-    @Field({ nullable: true })
-    photo_url: string;
 
     @Field( type => Int, { nullable: true })
     lang_type: number;
 }
 
 @InputType()
-export class createUserInfoInput {
+export class createUserInput {
     @Field( type => ID)
-    firebase_id: string;
+    uid: string;
 
-    @Field({ nullable: true })
-    user_name: string;
+    @Field( type => ID )
+    uuid_uid: string;
+
+    @Field( type => Int, { nullable: true })
+    lang_type: number;
 }
