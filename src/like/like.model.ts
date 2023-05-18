@@ -4,14 +4,11 @@ import { User } from 'src/user/user.model';
 
 @ObjectType()
 export class Like {
-  @Field(() => ID )
-  lid: number;
+  @Field( type => ID )
+  uuid_pid: string;
 
-  @Field(() => ID, { nullable: true })
-  pid: number;
-
-  @Field({ nullable: true })
-  uid: string;
+  @Field( type => ID)
+  uuid_uid: string;
 
   @Field(type => Post, {nullable: true })
   posts: Post;

@@ -8,13 +8,10 @@ import { User } from 'src/user/user.model';
 @ObjectType()
 export class Post {
   @Field( type => ID )
-  pid: number;
+  uuid_pid: string;
 
   @Field({ nullable: true })
-  pid_uuid: string;
-
-  @Field({ nullable: true })
-  uid: string;
+  uuid_uid: string;
 
   @Field({ nullable: true })
   title: string;
@@ -32,7 +29,7 @@ export class Post {
   likes_num: number;
 
   @Field( type => GraphQLISODateTime, { nullable: true })
-  update_time: Date;
+  timestamp: Date;
 
   @Field( type => Boolean, { nullable: true })
   publish: boolean;

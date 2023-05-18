@@ -8,30 +8,33 @@ datasource db {
 }
 
 model likes {
-  lid   Int    @id @default(autoincrement())
-  pid   Int
-  uid   String @db.VarChar(28)
-  users users  @relation(fields: [uid], references: [firebase_id], onDelete: NoAction, onUpdate: NoAction, map: "firebase_id_to_uid")
-  posts posts  @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "pid_to_pid")
+  uuid_uid  String   @db.Uuid
+  uuid_pid  String   @db.Uuid
+  timestamp DateTime @db.Timestamp(6)
+  posts     posts    @relation(fields: [uuid_pid], references: [uuid_pid], onDelete: NoAction, onUpdate: NoAction, map: "posts_to_likes_foreign")
+  users     users    @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "users_to_likes_foreign")
+
+  @@id([uuid_uid, uuid_pid], map: "likes_composite_primary")
 }
 
 model posts {
-  pid              Int               @id @default(autoincrement())
-  uid              String            @db.VarChar(28)
   title            String            @db.VarChar(60)
   top_image        String?           @db.VarChar
   top_link         String?           @db.VarChar
   content_type     Int               @db.SmallInt
   likes_num        Int               @default(0)
-  update_time      DateTime          @db.Timestamp(6)
+  timestamp        DateTime          @db.Timestamp(6)
   publish          Boolean           @default(false)
   deleted          Boolean           @default(false)
-  pid_uuid         String            @db.Uuid
-  users            users             @relation(fields: [uid], references: [firebase_id], onDelete: NoAction, onUpdate: NoAction, map: "user_to_posts")
+  uuid_pid         String            @id(map: "posts_primary") @unique(map: "uuid_pid_unique") @db.Uuid
+  uuid_uid         String            @db.Uuid
+  users            users             @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "user_uuid_to_posts_foreign")
   article_contents article_contents?
   likes            likes[]
   post_tags        post_tags[]
   source_contents  source_contents?
+
+  @@index([uuid_uid], map: "fki_user_uuid_to_posts_foreign")
 }
 
 model tags {
@@ -42,36 +45,36 @@ model tags {
 }
 
 model users {
-  firebase_id  String  @id @db.VarChar(28)
-  photo_url    String? @db.VarChar
+  uid          String  @id @db.VarChar(28)
   comment      String? @db.VarChar(150)
-  user_name    String? @db.VarChar(50)
   follower_num Int     @default(0)
   followee_num Int     @default(0)
   lang_type    Int     @default(0) @db.SmallInt
-  color_mode   Int     @default(0) @db.SmallInt
+  uuid_uid     String  @unique(map: "uuid_unique") @db.Uuid
   likes        likes[]
   posts        posts[]
 }
 
 model post_tags {
-  post_tag_id Int   @id(map: "posts_tags_pkey") @default(autoincrement())
-  pid         Int
-  tid         Int
-  posts       posts @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "posts_to_posttag")
-  tags        tags  @relation(fields: [tid], references: [tid], onDelete: NoAction, onUpdate: NoAction, map: "tags_to_posttag")
+  tid       Int
+  timestamp DateTime @db.Timestamp(6)
+  uuid_pid  String   @db.Uuid
+  posts     posts    @relation(fields: [uuid_pid], references: [uuid_pid], onDelete: NoAction, onUpdate: NoAction, map: "posts_to_post_tags_foreign")
+  tags      tags     @relation(fields: [tid], references: [tid], onDelete: NoAction, onUpdate: NoAction, map: "tags_to_post_tags_foreign")
+
+  @@id([uuid_pid, tid], map: "post_tags_composite_primary")
 }
 
 model source_contents {
-  pid         Int     @id(map: "slide_contents_pkey")
-  source_link String? @db.VarChar
-  source_type Int     @db.SmallInt
+  source_link String @db.VarChar
+  source_type Int    @db.SmallInt
   description Json
-  posts       posts   @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "post_to_slide_contents")
+  uuid_pid    String @id(map: "uuid_pid_primary") @db.Uuid
+  posts       posts  @relation(fields: [uuid_pid], references: [uuid_pid], onDelete: NoAction, onUpdate: NoAction, map: "post_to_souce_contents_forein")
 }
 
 model article_contents {
-  pid     Int   @id(map: "blog_contents_pkey")
-  content Json
-  posts   posts @relation(fields: [pid], references: [pid], onDelete: NoAction, onUpdate: NoAction, map: "post_to_blog_content")
+  content  Json
+  uuid_pid String @id(map: "article_contents_primary") @db.Uuid
+  posts    posts  @relation(fields: [uuid_pid], references: [uuid_pid], onDelete: NoAction, onUpdate: NoAction, map: "post_to_blog_contents_foreign")
 }

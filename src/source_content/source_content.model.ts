@@ -5,7 +5,7 @@ import { Post } from 'src/post/post.model';
 @ObjectType()
 export class SourceContent {
   @Field( type => ID)
-  pid: number;
+  uuid_pid: string;
 
   @Field({ nullable: true })
   source_link: string;
