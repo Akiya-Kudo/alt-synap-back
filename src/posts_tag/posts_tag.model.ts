@@ -5,12 +5,9 @@ import { Tag } from 'src/tag/tag.model';
 @ObjectType()
 export class PostTag {
   @Field(() => ID)
-  id: number;
+  uuid_pid: string;
 
-  @Field(() => ID, { nullable: true })
-  pid: number;
-
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int)
   tid: number;
 
   @Field( type => Post, { nullable: true })

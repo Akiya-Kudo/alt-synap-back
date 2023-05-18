@@ -8,13 +8,10 @@ import { Post } from 'src/post/post.model';
 @ObjectType()
 export class User {
   @Field( type => ID)
-  firebase_id: string;
+  uid: string;
 
-  @Field({ nullable: true })
-  user_name: string;
-
-  @Field({ nullable: true })
-  photo_url: string;
+  @Field( type => ID)
+  uuid_uid: string;
 
   @Field({ nullable: true })
   comment: string;
@@ -27,9 +24,6 @@ export class User {
 
   @Field( type => Int, { nullable: true })
   lang_type: number;
-
-  @Field( type => Int, { nullable: true })
-  color_mode: number;
 
   @Field( type => [Post], { nullable: true })
   posts: Post[];

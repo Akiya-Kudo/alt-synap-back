@@ -4,7 +4,7 @@ import { PostTag } from 'src/posts_tag/posts_tag.model';
 
 @ObjectType()
 export class Tag {
-  @Field( type => ID)
+  @Field( type => Int)
   tid: number;
 
   @Field({ nullable: true })
