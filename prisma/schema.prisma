@@ -10,7 +10,7 @@ datasource db {
 model likes {
   uuid_uid  String   @db.Uuid
   uuid_pid  String   @db.Uuid
-  timestamp DateTime @db.Timestamp(6)
+  timestamp DateTime @db.Timestamptz(6)
   posts     posts    @relation(fields: [uuid_pid], references: [uuid_pid], onDelete: NoAction, onUpdate: NoAction, map: "posts_to_likes_foreign")
   users     users    @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "users_to_likes_foreign")
 
@@ -23,15 +23,15 @@ model posts {
   top_link         String?           @db.VarChar
   content_type     Int               @db.SmallInt
   likes_num        Int               @default(0)
-  timestamp        DateTime          @db.Timestamp(6)
+  timestamp        DateTime?         @db.Timestamptz(6)
   publish          Boolean           @default(false)
   deleted          Boolean           @default(false)
   uuid_pid         String            @id(map: "posts_primary") @unique(map: "uuid_pid_unique") @db.Uuid
   uuid_uid         String            @db.Uuid
-  users            users             @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "user_uuid_to_posts_foreign")
   article_contents article_contents?
   likes            likes[]
   post_tags        post_tags[]
+  users            users             @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "user_uuid_to_posts_foreign")
   source_contents  source_contents?
 
   @@index([uuid_uid], map: "fki_user_uuid_to_posts_foreign")
@@ -57,7 +57,7 @@ model users {
 
 model post_tags {
   tid       Int
-  timestamp DateTime @db.Timestamp(6)
+  timestamp DateTime @db.Timestamptz(6)
   uuid_pid  String   @db.Uuid
   posts     posts    @relation(fields: [uuid_pid], references: [uuid_pid], onDelete: NoAction, onUpdate: NoAction, map: "posts_to_post_tags_foreign")
   tags      tags     @relation(fields: [tid], references: [tid], onDelete: NoAction, onUpdate: NoAction, map: "tags_to_post_tags_foreign")

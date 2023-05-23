@@ -20,11 +20,11 @@ class ArticleContentInput {
 
 @InputType()
 export class upsertArticlePostInput {
-    @Field( type => ID)
-    uuid_uid: string;
+    @Field( type => ID, { nullable: true })
+    uuid_pid: string;
 
     @Field( type => ID)
-    uuid_pid: string;
+    uuid_uid: string;
 
     @Field(type => ID)
     uid: string;
