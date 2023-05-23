@@ -9,7 +9,6 @@ export class PostResolver {
 
     @Mutation(() => Post, { name: "upsert_article_post"})
     async upsertArticlePost(@Args('postData') postData: upsertArticlePostInput) {
-        console.log(postData.uuid_uid);
         return this.postService.upsertArticlePost(postData);
     }
 }

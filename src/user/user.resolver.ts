@@ -33,14 +33,6 @@ export class UserResolver {
       lang_type
     });
   }
-  // @Mutation(() => User)
-  // async registerUser(@Args('createUserInfoData') createUserInfoData: createUserInfoInput) {
-  //   console.log(createUserInfoData.firebase_id);
-  //   return this.userService.createUser({ 
-  //     uid: createUserInfoData.firebase_id, 
-  //     user_name: createUserInfoData.user_name 
-  //   });
-  // }
 
   @Mutation(() => User, { name: "update_user_info" })
   async updateUser(
@@ -56,19 +48,4 @@ export class UserResolver {
       },
     });
   }
-  // @Mutation(() => User)
-  // async updateUserInfo(
-  //   @Args('updateUserInfoData') updateUserInfoData: updateUserInfoInput,
-  // ) {
-  //   console.log(updateUserInfoData);
-  //   return this.userService.updateUser({
-  //     where: { firebase_id: updateUserInfoData.firebase_id },
-  //     data: {
-  //       comment: updateUserInfoData.comment,
-  //       user_name: updateUserInfoData.user_name,
-  //       photo_url: updateUserInfoData.photo_url,
-  //       lang_type: updateUserInfoData.lang_type,
-  //     },
-  //   });
-  // }
 }

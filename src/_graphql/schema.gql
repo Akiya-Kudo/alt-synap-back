@@ -8,6 +8,10 @@ type ArticleContent {
   uuid_pid: ID!
 }
 
+input ArticleContentInput {
+  content: JSONObject!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -78,6 +82,11 @@ type Tag {
   tid: Int!
 }
 
+input TagInput {
+  tag_name: String!
+  tid: Int
+}
+
 type User {
   comment: String
   followee_num: Int
@@ -103,14 +112,15 @@ input updateUserInput {
 }
 
 input upsertArticlePostInput {
-  content: JSONObject
+  articleContent: ArticleContentInput!
   content_type: Int!
   deleted: Boolean!
   publish: Boolean!
-  tag_names: [String!]!
+  tags: [TagInput]!
   title: String!
   top_image: String
   top_link: String
+  uid: ID!
   uuid_pid: ID!
   uuid_uid: ID!
 }
