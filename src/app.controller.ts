@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user/user.service';
 import { users as UserModel, users } from '@prisma/client';
+import { createUserInput, updateUserInput } from 'src/custom_models/mutation.model';
 
 type profType = {
   firebase_id?: null | string;
@@ -24,15 +25,15 @@ export class AppController {
 
   @Post('user')
   async signupUser(
-    @Body() userData: { firebase_id: string; comment?: string },
+    @Body() userData: createUserInput,
   ): Promise<UserModel> {
     return this.userService.createUser(userData);
   }
 
   @Get('user/:firebase_id')
-  async getUser(@Param('firebase_id') firebase_id: string): Promise<users> {
+  async getUser(@Param('uid') uid: string): Promise<users> {
     return this.userService.user({
-      firebase_id: firebase_id,
+      uid: uid,
     });
   }
   @Get('usersAll')
@@ -40,24 +41,24 @@ export class AppController {
     return this.userService.usersAll();
   }
 
-  @Delete('user/:firebase_id')
+  @Delete('user/:uid')
   async deleteUser(
-    @Param('firebase_id') firebase_id: string,
-  ): Promise<{ firebase_id?: string }> {
+    @Param('uid') uid: string,
+  ): Promise<{ uid?: string }> {
     return this.userService.deleteUser({
-      firebase_id: firebase_id,
+      uid: uid,
     });
   }
 
-  @Put('user/:firebase_id')
+  @Put('user/:uid')
   async updateUser(
-    @Param('firebase_id') firebase_id: string,
+    @Param('uid') uid: string,
     @Body()
     profData: profType,
   ): Promise<any> {
     return this.userService.updateUser({
       where: {
-        firebase_id: firebase_id,
+        uid: uid,
       },
       data: profData,
     });
