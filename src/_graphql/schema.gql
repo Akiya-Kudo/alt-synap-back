@@ -33,7 +33,7 @@ type Like {
 type Mutation {
   create_user(userData: createUserInput!): User!
   update_user_info(userData: updateUserInput!): User!
-  upsert_article_post(postData: upsertArticlePostInput!): Post!
+  upsert_article_post(postData: upsertArticlePostInput!): upsertArticlePostOutput!
 }
 
 type Post {
@@ -123,4 +123,9 @@ input upsertArticlePostInput {
   uid: ID!
   uuid_pid: ID
   uuid_uid: ID!
+}
+
+type upsertArticlePostOutput {
+  post: Post!
+  tags: [Tag]!
 }

@@ -1,6 +1,8 @@
-import { Field, ID, InputType, Int } from "@nestjs/graphql";
+import { Field, ID, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { GraphQLJSONObject } from "graphql-scalars";
 import { ArticleContent } from "src/article_content/article_content.model";
+import { Post } from "src/post/post.model";
+import { Tag } from "src/tag/tag.model";
 import { User } from "src/user/user.model";
 
 @InputType()
@@ -52,6 +54,15 @@ export class upsertArticlePostInput {
     
     @Field( type => ArticleContentInput)
     articleContent: ArticleContentInput;
+}
+
+@ObjectType()
+export class upsertArticlePostOutput {
+    @Field( type => Post )
+    post: Post
+
+    @Field( type => [Tag], { nullable: "items" })
+    tags: Tag[]
 }
 
 @InputType()

@@ -8,11 +8,11 @@ datasource db {
 }
 
 model likes {
-  uuid_uid  String   @db.Uuid
-  uuid_pid  String   @db.Uuid
-  timestamp DateTime @db.Timestamptz(6)
-  posts     posts    @relation(fields: [uuid_pid], references: [uuid_pid], onDelete: NoAction, onUpdate: NoAction, map: "posts_to_likes_foreign")
-  users     users    @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "users_to_likes_foreign")
+  uuid_uid  String    @db.Uuid
+  uuid_pid  String    @db.Uuid
+  timestamp DateTime? @db.Timestamptz(6)
+  posts     posts     @relation(fields: [uuid_pid], references: [uuid_pid], onDelete: NoAction, onUpdate: NoAction, map: "posts_to_likes_foreign")
+  users     users     @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "users_to_likes_foreign")
 
   @@id([uuid_uid, uuid_pid], map: "likes_composite_primary")
 }
@@ -39,7 +39,7 @@ model posts {
 
 model tags {
   tid             Int         @id @default(autoincrement())
-  tag_name        String      @db.VarChar(30)
+  tag_name        String      @unique(map: "tag_name_unique") @db.VarChar(30)
   tag_content_num Int         @default(0)
   post_tags       post_tags[]
 }
@@ -57,10 +57,10 @@ model users {
 
 model post_tags {
   tid       Int
-  timestamp DateTime @db.Timestamptz(6)
-  uuid_pid  String   @db.Uuid
-  posts     posts    @relation(fields: [uuid_pid], references: [uuid_pid], onDelete: NoAction, onUpdate: NoAction, map: "posts_to_post_tags_foreign")
-  tags      tags     @relation(fields: [tid], references: [tid], onDelete: NoAction, onUpdate: NoAction, map: "tags_to_post_tags_foreign")
+  timestamp DateTime? @db.Timestamptz(6)
+  uuid_pid  String    @db.Uuid
+  posts     posts     @relation(fields: [uuid_pid], references: [uuid_pid], onDelete: NoAction, onUpdate: NoAction, map: "posts_to_post_tags_foreign")
+  tags      tags      @relation(fields: [tid], references: [tid], onDelete: NoAction, onUpdate: NoAction, map: "tags_to_post_tags_foreign")
 
   @@id([uuid_pid, tid], map: "post_tags_composite_primary")
 }
