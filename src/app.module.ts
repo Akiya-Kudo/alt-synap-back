@@ -12,6 +12,7 @@ import { TagModule } from './tag/tag.module';
 import { PostsTagModule } from './posts_tag/posts_tag.module';
 import { LikeModule } from './like/like.module';
 import { ArticleContentModule } from './article_content/article_content.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ArticleContentModule } from './article_content/article_content.module';
     TagModule,
     PostsTagModule,
     LikeModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

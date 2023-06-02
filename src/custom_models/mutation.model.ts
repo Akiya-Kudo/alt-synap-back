@@ -25,12 +25,6 @@ export class upsertArticlePostInput {
     @Field( type => ID, { nullable: true })
     uuid_pid: string;
 
-    @Field( type => ID)
-    uuid_uid: string;
-
-    @Field(type => ID)
-    uid: string;
-
     @Field()
     title: string;
         

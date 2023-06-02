@@ -120,9 +120,7 @@ input upsertArticlePostInput {
   title: String!
   top_image: String
   top_link: String
-  uid: ID!
   uuid_pid: ID
-  uuid_uid: ID!
 }
 
 type upsertArticlePostOutput {
