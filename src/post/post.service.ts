@@ -12,11 +12,61 @@ import { throwError } from 'rxjs';
 export class PostService {
     constructor(private prisma: PrismaService) {}
 
+    async searchTitle (
+        words: string[], 
+        selected_tids: number[],
+        pg_num: number,
+        sort_type_num: number,
+    ) {
+        try {
+            const word_conditions = words.map((word, _i) =>  Prisma.sql` AND p.title_lower LIKE likequery(${words[_i]}) `)
+
+            const tag_query = Prisma.sql`SELECT p.uuid_pid 
+            FROM posts AS p 
+            LEFT JOIN post_tags AS pt ON p.uuid_pid = pt.uuid_pid 
+            WHERE pt.tid IN (${ selected_tids.length > 0 && Prisma.join(selected_tids) })
+            GROUP BY p.uuid_pid
+            HAVING COUNT(DISTINCT pt.tid) = ${ selected_tids.length }`
+
+            const sort_condition = sort_type_num == 0 ? Prisma.sql`ORDER BY p.likes_num DESC` : Prisma.sql`ORDER BY p.timestamp DESC`
+
+            const execute_sql = 
+            Prisma.sql`
+            SELECT
+                p.uuid_pid, 
+                p.uuid_uid, 
+                p.title, 
+                p.top_link, 
+                p.top_image, 
+                p.timestamp,
+                p.likes_num,
+                JSON_AGG(JSON_BUILD_OBJECT( 'tid', t.tid, 'tag_name', t.tag_name )) AS tags,
+                COUNT(*) OVER() as total_count
+            FROM posts AS p
+            LEFT JOIN post_tags AS pt ON p.uuid_pid = pt.uuid_pid
+            JOIN tags AS t ON pt.tid = t.tid
+            WHERE p.deleted = FALSE
+            AND p.publish = FALSE
+            ${ words.length > 0 ? Prisma.join(word_conditions, '') : Prisma.sql`` }
+            ${ selected_tids.length > 0 ? Prisma.sql` AND p.uuid_pid IN (${tag_query}) ` : Prisma.sql`` }
+            GROUP BY p.uuid_pid
+            ${ sort_condition } 
+            LIMIT 20 OFFSET ${ pg_num } * 20;
+            `
+
+            return await this.prisma.$queryRaw(execute_sql, ...words, ...selected_tids, pg_num)
+        } catch ( error ) {
+            log(error)
+            throw new HttpException("Faild to seatch Post", HttpStatus.BAD_REQUEST)
+        }
+    }
+
     async upsertArticlePost(postData: upsertArticlePostInput, uid_token: string) {
         try {
             const transaction = await this.prisma.$transaction(async (prisma) => {
                 //seperate the input values
                 let {uuid_pid, title, top_image, top_link, content_type, publish, deleted} = postData
+                const title_lower = title.toLowerCase()
                 const article_content_input_object = postData.articleContent.content as object
                 const tags_input = postData.tags
                 // nested variables pre difinitions
@@ -39,6 +89,7 @@ export class PostService {
                             uuid_pid,
                             users: { connect: {uuid_uid: uuid_uid} },
                             title,
+                            title_lower,
                             top_image,
                             top_link,
                             content_type,
@@ -68,6 +119,7 @@ export class PostService {
                         },
                         data: {
                             title,
+                            title_lower,
                             top_image,
                             top_link,
                             content_type,

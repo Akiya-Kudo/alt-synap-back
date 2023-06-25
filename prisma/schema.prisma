@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
 }
 
 datasource db {
@@ -18,7 +18,8 @@ model likes {
 }
 
 model posts {
-  title            String            @db.VarChar(60)
+  title            String            @db.VarChar(100)
+  title_lower      String            @db.VarChar(100)
   top_image        String?           @db.VarChar
   top_link         String?           @db.VarChar
   content_type     Int               @db.SmallInt
@@ -35,6 +36,7 @@ model posts {
   source_contents  source_contents?
 
   @@index([uuid_uid], map: "fki_user_uuid_to_posts_foreign")
+  @@index([title_lower(ops: raw("gin_bigm_ops"))], map: "pg_idx", type: Gin)
 }
 
 model tags {
@@ -46,7 +48,7 @@ model tags {
 
 model users {
   uid          String  @id @db.VarChar(28)
-  comment      String? @db.VarChar(150)
+  comment      String? @db.VarChar(255)
   follower_num Int     @default(0)
   followee_num Int     @default(0)
   lang_type    Int     @default(0) @db.SmallInt

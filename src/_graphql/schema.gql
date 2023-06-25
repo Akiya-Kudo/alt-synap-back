@@ -47,6 +47,7 @@ type Post {
   source_contents: SourceContent
   timestamp: DateTime
   title: String
+  title_lower: String
   top_image: String
   top_link: String
   users: User
@@ -63,6 +64,7 @@ type PostTag {
 }
 
 type Query {
+  search_post_tag(pgNum: Int!, searchString: String!, selectedTagIds: [Int]!, sortType: Int!): [Post!]!
   user(uid: String!): User
   users_all: [User]!
 }
