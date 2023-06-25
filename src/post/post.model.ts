@@ -17,6 +17,9 @@ export class Post {
   title: string;
 
   @Field({ nullable: true })
+  title_lower: string;
+
+  @Field({ nullable: true })
   top_image: string;
 
   @Field({ nullable: true })
