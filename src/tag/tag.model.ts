@@ -10,6 +10,12 @@ export class Tag {
   @Field({ nullable: true })
   tag_name: string;
 
+  @Field({ nullable: true })
+  display_name: string;
+  
+  @Field({ nullable: true })
+  tag_image: string;
+
   @Field( type => Int, { nullable: true })
   tag_content_num: number;
 

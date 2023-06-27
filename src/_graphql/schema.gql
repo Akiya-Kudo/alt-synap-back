@@ -64,7 +64,7 @@ type PostTag {
 }
 
 type Query {
-  search_post_tag(pgNum: Int!, searchString: String!, selectedTagIds: [Int]!, sortType: Int!): [Post!]!
+  search_post_tag(pgNum: Int!, searchString: String!, selectedTagIds: [Int]!, sortType: Int!): searchPostTagOutput!
   user(uid: String!): User
   users_all: [User]!
 }
@@ -78,8 +78,10 @@ type SourceContent {
 }
 
 type Tag {
+  display_name: String
   post_tags: [PostTag!]
   tag_content_num: Int
+  tag_image: String
   tag_name: String
   tid: Int!
 }
@@ -104,6 +106,12 @@ input createUserInput {
   lang_type: Int
   uid: ID!
   uuid_uid: ID!
+}
+
+type searchPostTagOutput {
+  posts: [Post]!
+  tags: [Tag]!
+  total_count: Int
 }
 
 input updateUserInput {
