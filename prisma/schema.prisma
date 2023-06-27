@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -42,6 +42,8 @@ model posts {
 model tags {
   tid             Int         @id @default(autoincrement())
   tag_name        String      @unique(map: "tag_name_unique") @db.VarChar(30)
+  display_name    String      @db.VarChar(40)
+  tag_image       String?     @db.VarChar
   tag_content_num Int         @default(0)
   post_tags       post_tags[]
 }

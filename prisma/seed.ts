@@ -4,14 +4,19 @@ import { log } from "console";
 
 const prisma = new PrismaClient();
 async function main() {
+    const tag1_name = faker.word.noun() + faker.music.genre()
+    const tag2_name = faker.word.noun() + faker.music.genre()
     const tag1 = await prisma.tags.create({
         data: {
-            tag_name: faker.word.noun() + faker.music.genre()
+            tag_name: tag1_name,
+            display_name: tag1_name,
+
         }
     })
     const tag2 = await prisma.tags.create({
         data: {
-            tag_name: faker.word.noun() + faker.music.genre()
+            tag_name: tag2_name,
+            display_name: tag2_name,
         }
     })
     for (let index = 0; index < 100; index++) {
@@ -24,11 +29,23 @@ async function main() {
             }
         })
 
+        const tag_name = faker.word.noun() + faker.number.int({ max: 100 }) + faker.number.int({ max: 10 })
         const tag = await prisma.tags.create({
             data: {
-                tag_name: faker.word.noun() + faker.number.int({ max: 100 }) + faker.number.int({ max: 10 }),
+                tag_name: tag_name,
+                display_name: tag_name,
             }
         })
+        for (let index = 0; index < 100; index++) {
+            const tag_name_for = faker.word.noun() + faker.number.int({ max: 1000 }) + faker.number.int({ max: 1000 })
+            const tag_fakes = await prisma.tags.create({
+                data: {
+                    tag_name: tag_name_for,
+                    display_name: tag_name_for
+                }
+            })
+            log(tag_fakes)
+        }
 
         for (let index = 0; index < 50; index++) {
             const street = faker.location.streetAddress();

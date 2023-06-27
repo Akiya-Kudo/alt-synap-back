@@ -4,7 +4,7 @@ import { upsertArticlePostInput, upsertArticlePostOutput } from 'src/custom_mode
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { TokenGuard } from 'src/auth/token.guard';
 import { AuthService } from 'src/auth/auth.service';
-import { searchPostTagOutput } from 'src/custom_models/query.model';
+import { PostWithTags, PostWithTagsAndTotalCount, searchPostTagOutput } from 'src/custom_models/query.model';
 import { Tag } from 'src/tag/tag.model';
 import { log } from 'console';
 import { Post } from './post.model';
@@ -32,7 +32,7 @@ export class PostResolver {
         }
     }
 
-    @Query(() => [Post], { name: "search_post_tag" })
+    @Query(() => searchPostTagOutput, { name: "search_post_tag" })
     async searchPostTag(
         @Args('searchString') searchString: string,
         @Args('selectedTagIds', { type: () => [Int], nullable: 'items' }) selectedTagIds: number[],
@@ -40,17 +40,35 @@ export class PostResolver {
         @Args('sortType', {type: () => Int}) sortType:number
     ) {
         try {
-            //引数のString => lowerケース変換 => 空白で分類配列化 => exclude wordを除外
+            //引数の整形 : ( 引数のString => lowerケース変換 => 空白で分類配列化 => exclude wordを除外 )
             const excludes = ["a", "and", "the", "are", "is"]
             const words = searchString.toLowerCase().replace(/　/g, ' ').split(' ').filter( word => word && !excludes.includes(word) )
 
-            const res_posts = await this.postService.searchTitle(words, selectedTagIds, pgNum, sortType);
-            // const res_tags = this.tagService.searchTags();
-            console.log(res_posts);
-            
-            return res_posts
+            //posts search from title & selected tags 
+            let res_posts = await this.postService.searchTitle(words, selectedTagIds, pgNum, sortType);
+            //result posts total_countのその値を取得しPostから削除
+            let total_count = 0;
+            if (res_posts.length > 0) total_count = Number(res_posts[0].total_count)
+            res_posts =res_posts.map(post => {
+                delete post.total_count
+                return post
+            })
+
+            // tags seatch from tag_name
+            let res_tags = []
+            if (words) {
+                res_tags = await this.tagService.searchTags(words)
+            }
+
+            return {
+                posts: res_posts,
+                tags:res_tags,
+                total_count
+            }
         } catch (error) {
+            console.error(error);
             throw new HttpException("Faild to search Post by title", HttpStatus.BAD_REQUEST)
+            
         }
     }
 }

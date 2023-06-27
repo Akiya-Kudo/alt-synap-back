@@ -28,6 +28,8 @@ CREATE TABLE "posts" (
 CREATE TABLE "tags" (
     "tid" SERIAL NOT NULL,
     "tag_name" VARCHAR(30) NOT NULL,
+    "display_name" VARCHAR(40) NOT NULL,
+    "tag_image" VARCHAR,
     "tag_content_num" INTEGER NOT NULL DEFAULT 0,
 
     CONSTRAINT "tags_pkey" PRIMARY KEY ("tid")

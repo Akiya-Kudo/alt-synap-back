@@ -4,9 +4,8 @@ import { upsertArticlePostInput } from 'src/custom_models/mutation.model';
 import {v4 as uuid_v4} from 'uuid'
 import { posts, Prisma } from '@prisma/client';
 import { Post } from './post.model';
-import { ArticleContent } from 'src/article_content/article_content.model';
 import { log } from 'console';
-import { throwError } from 'rxjs';
+import { PostWithTagsAndTotalCount } from 'src/custom_models/query.model';
 
 @Injectable()
 export class PostService {
@@ -17,7 +16,7 @@ export class PostService {
         selected_tids: number[],
         pg_num: number,
         sort_type_num: number,
-    ) {
+    ) : Promise<PostWithTagsAndTotalCount[]>{
         try {
             const word_conditions = words.map((word, _i) =>  Prisma.sql` AND p.title_lower LIKE likequery(${words[_i]}) `)
 
@@ -53,10 +52,8 @@ export class PostService {
             ${ sort_condition } 
             LIMIT 20 OFFSET ${ pg_num } * 20;
             `
-
             return await this.prisma.$queryRaw(execute_sql, ...words, ...selected_tids, pg_num)
         } catch ( error ) {
-            log(error)
             throw new HttpException("Faild to seatch Post", HttpStatus.BAD_REQUEST)
         }
     }
@@ -147,7 +144,11 @@ export class PostService {
                     const tag_names_in_before = tags_in_before.map(tag=>tag.tag_name)
                     const tags_not_in_db = tag_names_input
                     .filter(tag_name=>!tag_names_in_before.includes(tag_name))
-                    .map(tag_name=>({tag_name: tag_name}))
+                    .map(tag_name=>({
+                        tag_name: tag_name,
+                        display_name: tag_name,
+                    }))
+
                     await prisma.tags.createMany({
                         data: tags_not_in_db,
                         skipDuplicates: true  //例外時用に定義 skip時にもtidのincrementが増加するため tags_not_in_dbによりskipを回避
