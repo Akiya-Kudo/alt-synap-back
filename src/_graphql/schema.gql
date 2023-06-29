@@ -64,7 +64,8 @@ type PostTag {
 }
 
 type Query {
-  search_post_tag(pgNum: Int!, searchString: String!, selectedTagIds: [Int]!, sortType: Int!): searchPostTagOutput!
+  search_post_tag(pgNum: Int!, searchString: String!, selectedTagIds: [Int]!, sortType: Int!): searchPostOutput!
+  search_tag(searchString: String!, selectedTagIds: [Int]!): [Tag!]!
   user(uid: String!): User
   users_all: [User]!
 }
@@ -108,9 +109,8 @@ input createUserInput {
   uuid_uid: ID!
 }
 
-type searchPostTagOutput {
+type searchPostOutput {
   posts: [Post]!
-  tags: [Tag]!
   total_count: Int
 }
 

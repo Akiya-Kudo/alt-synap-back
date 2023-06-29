@@ -20,7 +20,8 @@ export class TagService {
                     display_name: true,
                     tag_image: true,
                     tag_content_num: true
-                }
+                },
+                take: 10,
             })
         }
 
