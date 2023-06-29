@@ -4,12 +4,12 @@ import { upsertArticlePostInput, upsertArticlePostOutput } from 'src/custom_mode
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { TokenGuard } from 'src/auth/token.guard';
 import { AuthService } from 'src/auth/auth.service';
-import { PostWithTags, PostWithTagsAndTotalCount, searchPostTagOutput } from 'src/custom_models/query.model';
 import { Tag } from 'src/tag/tag.model';
 import { log } from 'console';
 import { Post } from './post.model';
 import { PostsTagService } from 'src/posts_tag/posts_tag.service';
 import { TagService } from 'src/tag/tag.service';
+import { searchPostOutput } from 'src/custom_models/query.model';
 
 @Resolver()
 export class PostResolver {
@@ -32,7 +32,7 @@ export class PostResolver {
         }
     }
 
-    @Query(() => searchPostTagOutput, { name: "search_post_tag" })
+    @Query(() => searchPostOutput, { name: "search_post_tag" })
     async searchPostTag(
         @Args('searchString') searchString: string,
         @Args('selectedTagIds', { type: () => [Int], nullable: 'items' }) selectedTagIds: number[],
@@ -54,15 +54,8 @@ export class PostResolver {
                 return post
             })
 
-            // tags seatch from tag_name
-            let res_tags = []
-            if (words) {
-                res_tags = await this.tagService.searchTags(words)
-            }
-
             return {
                 posts: res_posts,
-                tags:res_tags,
                 total_count
             }
         } catch (error) {
