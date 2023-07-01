@@ -18,6 +18,9 @@ export class Post {
 
   @Field({ nullable: true })
   title_lower: string;
+  
+  @Field({ nullable: true })
+  title_tags_search_text: string;
 
   @Field({ nullable: true })
   top_image: string;

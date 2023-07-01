@@ -11,6 +11,7 @@ CREATE TABLE "likes" (
 CREATE TABLE "posts" (
     "title" VARCHAR(100) NOT NULL,
     "title_lower" VARCHAR(100) NOT NULL,
+    "title_tags_search_text" VARCHAR(500) NOT NULL,
     "top_image" VARCHAR,
     "top_link" VARCHAR,
     "content_type" SMALLINT NOT NULL,

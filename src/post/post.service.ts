@@ -18,7 +18,7 @@ export class PostService {
         sort_type_num: number,
     ) : Promise<PostWithTagsAndTotalCount[]>{
         try {
-            const word_conditions = words.map((word, _i) =>  Prisma.sql` AND p.title_lower LIKE likequery(${words[_i]}) `)
+            const word_conditions = words.map((word, _i) =>  Prisma.sql` AND p.title_tags_search_text LIKE likequery(${words[_i]}) `)
 
             const tag_query = Prisma.sql`SELECT p.uuid_pid 
             FROM posts AS p 
@@ -34,7 +34,7 @@ export class PostService {
             SELECT
                 p.uuid_pid, 
                 p.uuid_uid, 
-                p.title, 
+                p.title,
                 p.top_link, 
                 p.top_image, 
                 p.timestamp,
@@ -87,6 +87,7 @@ export class PostService {
                             users: { connect: {uuid_uid: uuid_uid} },
                             title,
                             title_lower,
+                            title_tags_search_text: title_lower,
                             top_image,
                             top_link,
                             content_type,
@@ -107,7 +108,7 @@ export class PostService {
                             uuid_uid: true
                         }}}
                     })
-                    // check if orner is same to token
+                    // check if orner is same to token, for the case incorrect user tend to change other users posts
                     if (post_before.users.uid !== uid_token ) throw new HttpException("Orner ship is not correct", HttpStatus.FORBIDDEN)
                     // update post & article_content except for uuid_uid
                     post = await prisma.posts.update({
