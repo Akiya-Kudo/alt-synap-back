@@ -21,8 +21,8 @@ export class PostWithTagsAndTotalCount extends PostWithTags {
 
 @ObjectType()
 export class searchPostOutput {
-    @Field( type => [Post], { nullable: "items" })
-    posts: Post[]
+    @Field( type => [PostWithTags], { nullable: "items" })
+    posts: PostWithTags[]
 
     @Field( type => Int, { nullable: true })
     total_count: number

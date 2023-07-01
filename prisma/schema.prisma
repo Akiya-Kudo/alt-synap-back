@@ -18,22 +18,23 @@ model likes {
 }
 
 model posts {
-  title            String            @db.VarChar(100)
-  title_lower      String            @db.VarChar(100)
-  top_image        String?           @db.VarChar
-  top_link         String?           @db.VarChar
-  content_type     Int               @db.SmallInt
-  likes_num        Int               @default(0)
-  timestamp        DateTime?         @db.Timestamptz(6)
-  publish          Boolean           @default(false)
-  deleted          Boolean           @default(false)
-  uuid_pid         String            @id(map: "posts_primary") @unique(map: "uuid_pid_unique") @db.Uuid
-  uuid_uid         String            @db.Uuid
-  article_contents article_contents?
-  likes            likes[]
-  post_tags        post_tags[]
-  users            users             @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "user_uuid_to_posts_foreign")
-  source_contents  source_contents?
+  title                  String            @db.VarChar(100)
+  title_lower            String            @db.VarChar(100)
+  title_tags_search_text String            @db.VarChar(500)
+  top_image              String?           @db.VarChar
+  top_link               String?           @db.VarChar
+  content_type           Int               @db.SmallInt
+  likes_num              Int               @default(0)
+  timestamp              DateTime?         @db.Timestamptz(6)
+  publish                Boolean           @default(false)
+  deleted                Boolean           @default(false)
+  uuid_pid               String            @id(map: "posts_primary") @unique(map: "uuid_pid_unique") @db.Uuid
+  uuid_uid               String            @db.Uuid
+  article_contents       article_contents?
+  likes                  likes[]
+  post_tags              post_tags[]
+  users                  users             @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "user_uuid_to_posts_foreign")
+  source_contents        source_contents?
 
   @@index([uuid_uid], map: "fki_user_uuid_to_posts_foreign")
   @@index([title_lower(ops: raw("gin_bigm_ops"))], map: "pg_idx", type: Gin)

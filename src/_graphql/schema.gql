@@ -48,6 +48,7 @@ type Post {
   timestamp: DateTime
   title: String
   title_lower: String
+  title_tags_search_text: String
   top_image: String
   top_link: String
   users: User
@@ -61,6 +62,27 @@ type PostTag {
   tid: Int!
   timestamp: DateTime
   uuid_pid: ID!
+}
+
+type PostWithTags {
+  article_contents: ArticleContent
+  content_type: Int
+  deleted: Boolean
+  likes: [Like!]
+  likes_num: Int
+  post_tags: [PostTag!]
+  publish: Boolean
+  source_contents: SourceContent
+  tags: [Tag]
+  timestamp: DateTime
+  title: String
+  title_lower: String
+  title_tags_search_text: String
+  top_image: String
+  top_link: String
+  users: User
+  uuid_pid: ID!
+  uuid_uid: String
 }
 
 type Query {
@@ -110,7 +132,7 @@ input createUserInput {
 }
 
 type searchPostOutput {
-  posts: [Post]!
+  posts: [PostWithTags]!
   total_count: Int
 }
 
