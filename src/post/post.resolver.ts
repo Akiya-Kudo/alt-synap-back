@@ -4,10 +4,6 @@ import { upsertArticlePostInput, upsertArticlePostOutput } from 'src/custom_mode
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { TokenGuard } from 'src/auth/token.guard';
 import { AuthService } from 'src/auth/auth.service';
-import { Tag } from 'src/tag/tag.model';
-import { log } from 'console';
-import { Post } from './post.model';
-import { PostsTagService } from 'src/posts_tag/posts_tag.service';
 import { TagService } from 'src/tag/tag.service';
 import { searchPostOutput } from 'src/custom_models/query.model';
 
@@ -45,7 +41,9 @@ export class PostResolver {
             const words = searchString.toLowerCase().replace(/　/g, ' ').split(' ').filter( word => word && !excludes.includes(word) )
 
             //posts search from title & selected tags 
-            let res_posts = await this.postService.searchTitle(words, selectedTagIds, pgNum, sortType);
+            let res_posts = await this.postService.searchPostFromTitleAndTags(words, selectedTagIds, pgNum, sortType);
+            console.log(res_posts);
+            
             //result posts total_countのその値を取得しPostから削除
             let total_count = 0;
             if (res_posts.length > 0) total_count = Number(res_posts[0].total_count)

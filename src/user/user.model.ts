@@ -7,11 +7,17 @@ import { Post } from 'src/post/post.model';
 
 @ObjectType()
 export class User {
-  @Field( type => ID)
+  @Field( type => ID, { nullable: true })
   uid: string;
 
-  @Field( type => ID)
+  @Field( type => ID, { nullable: true })
   uuid_uid: string;
+
+  @Field({ nullable: true })
+  user_name: string;
+
+  @Field({ nullable: true })
+  user_image: string;
 
   @Field({ nullable: true })
   comment: string;
