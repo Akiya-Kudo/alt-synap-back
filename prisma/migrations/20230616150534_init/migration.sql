@@ -12,8 +12,8 @@ CREATE TABLE "posts" (
     "title" VARCHAR(100) NOT NULL,
     "title_lower" VARCHAR(100) NOT NULL,
     "title_tags_search_text" VARCHAR(500) NOT NULL,
-    "top_image" VARCHAR,
-    "top_link" VARCHAR,
+    "top_image" VARCHAR(2048),
+    "top_link" VARCHAR(2048),
     "content_type" SMALLINT NOT NULL,
     "likes_num" INTEGER NOT NULL DEFAULT 0,
     "timestamp" TIMESTAMPTZ(6),
@@ -30,7 +30,7 @@ CREATE TABLE "tags" (
     "tid" SERIAL NOT NULL,
     "tag_name" VARCHAR(30) NOT NULL,
     "display_name" VARCHAR(40) NOT NULL,
-    "tag_image" VARCHAR,
+    "tag_image" VARCHAR(2048),
     "tag_content_num" INTEGER NOT NULL DEFAULT 0,
 
     CONSTRAINT "tags_pkey" PRIMARY KEY ("tid")
@@ -39,6 +39,8 @@ CREATE TABLE "tags" (
 -- CreateTable
 CREATE TABLE "users" (
     "uid" VARCHAR(28) NOT NULL,
+    "user_name" VARCHAR(255),
+    "user_image" VARCHAR(2048),
     "comment" VARCHAR(255),
     "follower_num" INTEGER NOT NULL DEFAULT 0,
     "followee_num" INTEGER NOT NULL DEFAULT 0,
@@ -59,7 +61,7 @@ CREATE TABLE "post_tags" (
 
 -- CreateTable
 CREATE TABLE "source_contents" (
-    "source_link" VARCHAR NOT NULL,
+    "source_link" VARCHAR(2048) NOT NULL,
     "source_type" SMALLINT NOT NULL,
     "description" JSONB NOT NULL,
     "uuid_pid" UUID NOT NULL,

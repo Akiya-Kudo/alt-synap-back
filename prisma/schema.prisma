@@ -21,8 +21,8 @@ model posts {
   title                  String            @db.VarChar(100)
   title_lower            String            @db.VarChar(100)
   title_tags_search_text String            @db.VarChar(500)
-  top_image              String?           @db.VarChar
-  top_link               String?           @db.VarChar
+  top_image              String?           @db.VarChar(2048)
+  top_link               String?           @db.VarChar(2048)
   content_type           Int               @db.SmallInt
   likes_num              Int               @default(0)
   timestamp              DateTime?         @db.Timestamptz(6)
@@ -37,20 +37,23 @@ model posts {
   source_contents        source_contents?
 
   @@index([uuid_uid], map: "fki_user_uuid_to_posts_foreign")
-  @@index([title_lower(ops: raw("gin_bigm_ops"))], map: "pg_idx", type: Gin)
+  @@index([title_lower(ops: raw("gin_bigm_ops"))], map: "pg_idx_title_lower", type: Gin)
+  @@index([title_tags_search_text(ops: raw("gin_bigm_ops"))], map: "pg_idx_title_tags_text", type: Gin)
 }
 
 model tags {
   tid             Int         @id @default(autoincrement())
   tag_name        String      @unique(map: "tag_name_unique") @db.VarChar(30)
   display_name    String      @db.VarChar(40)
-  tag_image       String?     @db.VarChar
+  tag_image       String?     @db.VarChar(2048)
   tag_content_num Int         @default(0)
   post_tags       post_tags[]
 }
 
 model users {
   uid          String  @id @db.VarChar(28)
+  user_name    String? @db.VarChar(255)
+  user_image   String? @db.VarChar(2048)
   comment      String? @db.VarChar(255)
   follower_num Int     @default(0)
   followee_num Int     @default(0)
@@ -71,7 +74,7 @@ model post_tags {
 }
 
 model source_contents {
-  source_link String @db.VarChar
+  source_link String @db.VarChar(2048)
   source_type Int    @db.SmallInt
   description Json
   uuid_pid    String @id(map: "uuid_pid_primary") @db.Uuid

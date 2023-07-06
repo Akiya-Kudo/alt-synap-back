@@ -1,28 +1,27 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { Post } from "src/post/post.model";
 import { Tag } from "src/tag/tag.model";
+import { User } from "src/user/user.model";
 
-// @InputType()
-// export class SearchPostTagInput {
-//     @Field({ nullable: true })
-//     search_string: string;
-// }
 @ObjectType()
-export class PostWithTags extends Post {
+export class PostWithTagsAndUser extends Post {
     @Field( type => [Tag], { nullable: 'itemsAndList' } )
     tags: Tag[]
+
+    @Field( type => User, { nullable: true } )
+    user: User
 }
 
 @ObjectType()
-export class PostWithTagsAndTotalCount extends PostWithTags {
+export class PostWithTagsAndUserAndTotalCount extends PostWithTagsAndUser {
     @Field( type => Int, { nullable: true } )
     total_count: bigint
 }
 
 @ObjectType()
 export class searchPostOutput {
-    @Field( type => [PostWithTags], { nullable: "items" })
-    posts: PostWithTags[]
+    @Field( type => [PostWithTagsAndUser], { nullable: "items" })
+    posts: PostWithTagsAndUser[]
 
     @Field( type => Int, { nullable: true })
     total_count: number

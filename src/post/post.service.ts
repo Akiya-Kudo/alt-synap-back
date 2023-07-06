@@ -5,18 +5,18 @@ import {v4 as uuid_v4} from 'uuid'
 import { posts, Prisma } from '@prisma/client';
 import { Post } from './post.model';
 import { log } from 'console';
-import { PostWithTagsAndTotalCount } from 'src/custom_models/query.model';
+import { PostWithTagsAndUserAndTotalCount } from 'src/custom_models/query.model';
 
 @Injectable()
 export class PostService {
     constructor(private prisma: PrismaService) {}
 
-    async searchTitle (
+    async searchPostFromTitleAndTags (
         words: string[], 
         selected_tids: number[],
         pg_num: number,
         sort_type_num: number,
-    ) : Promise<PostWithTagsAndTotalCount[]>{
+    ) : Promise<PostWithTagsAndUserAndTotalCount[]>{
         try {
             const word_conditions = words.map((word, _i) =>  Prisma.sql` AND p.title_tags_search_text LIKE likequery(${words[_i]}) `)
 
@@ -39,16 +39,18 @@ export class PostService {
                 p.top_image, 
                 p.timestamp,
                 p.likes_num,
-                JSON_AGG(JSON_BUILD_OBJECT( 'tid', t.tid, 'tag_name', t.tag_name )) AS tags,
+                JSON_AGG(JSON_BUILD_OBJECT( 'tid', t.tid, 'tag_name', t.tag_name, 'display_name', t.display_name, 'tag_image', t.tag_image )) AS tags,
+                JSON_BUILD_OBJECT( 'uuid_uid', u.uuid_uid, 'user_name', u.user_name, 'user_image', u.user_image ) AS user,
                 COUNT(*) OVER() as total_count
             FROM posts AS p
             LEFT JOIN post_tags AS pt ON p.uuid_pid = pt.uuid_pid
-            JOIN tags AS t ON pt.tid = t.tid
+            LEFT JOIN tags AS t ON pt.tid = t.tid
+            JOIN users AS u ON p.uuid_uid = u.uuid_uid
             WHERE p.deleted = FALSE
             AND p.publish = FALSE
             ${ words.length > 0 ? Prisma.join(word_conditions, '') : Prisma.sql`` }
             ${ selected_tids.length > 0 ? Prisma.sql` AND p.uuid_pid IN (${tag_query}) ` : Prisma.sql`` }
-            GROUP BY p.uuid_pid
+            GROUP BY p.uuid_pid, u.uuid_uid, u.user_name, u.user_image
             ${ sort_condition } 
             LIMIT 20 OFFSET ${ pg_num } * 20;
             `
