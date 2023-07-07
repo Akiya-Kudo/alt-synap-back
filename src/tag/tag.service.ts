@@ -21,7 +21,10 @@ export class TagService {
                     tag_image: true,
                     tag_content_num: true
                 },
-                take: 10,
+                take: 5,
+                orderBy: {
+                    tag_content_num: 'desc',
+                }
             })
         }
 
@@ -36,7 +39,7 @@ export class TagService {
                 tag_image: true,
                 tag_content_num: true
             },
-            take: 10,
+            take: 5,
             orderBy: {
                 tag_content_num: 'desc',
             }

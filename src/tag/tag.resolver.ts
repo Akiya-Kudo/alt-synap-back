@@ -9,8 +9,7 @@ export class TagResolver {
 
     @Query(() => [Tag], { name: "search_tag" })
     async searchPostTag(
-        @Args('searchString') searchString: string,
-        @Args('selectedTagIds', { type: () => [Int], nullable: 'items' }) selectedTagIds: number[],
+        @Args('searchString') searchString: string
     ) {
         try {
             //引数の整形 : ( 引数のString => lowerケース変換 => 空白で分類配列化 => exclude wordを除外 )
@@ -19,7 +18,7 @@ export class TagResolver {
 
             // tags seatch from tag_name
             let res_tags = []
-            if (words) {
+            if (words.length > 0) {
                 res_tags = await this.tagService.searchTags(words)
             }
 

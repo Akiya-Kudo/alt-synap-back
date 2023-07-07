@@ -88,7 +88,7 @@ type PostWithTagsAndUser {
 
 type Query {
   search_post_tag(pgNum: Int!, searchString: String!, selectedTagIds: [Int]!, sortType: Int!): searchPostOutput!
-  search_tag(searchString: String!, selectedTagIds: [Int]!): [Tag!]!
+  search_tag(searchString: String!): [Tag!]!
   user(uid: String!): User
   users_all: [User]!
 }

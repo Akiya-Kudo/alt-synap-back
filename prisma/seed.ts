@@ -11,6 +11,7 @@ async function main() {
             data: {
                 tag_name: tag_name,
                 display_name: tag_name,
+                tag_image: faker.datatype.boolean() ? 'https://bit.ly/sage-adebayo' : null,
             }
         })
     }
