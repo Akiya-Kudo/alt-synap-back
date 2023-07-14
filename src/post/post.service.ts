@@ -47,13 +47,14 @@ export class PostService {
             LEFT JOIN tags AS t ON pt.tid = t.tid
             JOIN users AS u ON p.uuid_uid = u.uuid_uid
             WHERE p.deleted = FALSE
-            AND p.publish = FALSE
+            AND p.publish = TRUE 
             ${ words.length > 0 ? Prisma.join(word_conditions, '') : Prisma.sql`` }
             ${ selected_tids.length > 0 ? Prisma.sql` AND p.uuid_pid IN (${tag_query}) ` : Prisma.sql`` }
             GROUP BY p.uuid_pid, u.uuid_uid, u.user_name, u.user_image
             ${ sort_condition } 
             LIMIT 20 OFFSET ${ pg_num } * 20;
             `
+
             return await this.prisma.$queryRaw(execute_sql, ...words, ...selected_tids, pg_num)
         } catch ( error ) {
             throw new HttpException("Faild to seatch Post", HttpStatus.BAD_REQUEST)
