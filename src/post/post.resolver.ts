@@ -28,8 +28,8 @@ export class PostResolver {
         }
     }
 
-    @Query(() => searchPostOutput, { name: "search_post_tag" })
-    async searchPostTag(
+    @Query(() => searchPostOutput, { name: "search_post" })
+    async searchPost(
         @Args('searchString') searchString: string,
         @Args('selectedTagIds', { type: () => [Int], nullable: 'items' }) selectedTagIds: number[],
         @Args('pgNum', {type: () => Int}) pgNum:number,
@@ -42,7 +42,6 @@ export class PostResolver {
 
             //posts search from title & selected tags 
             let res_posts = await this.postService.searchPostFromTitleAndTags(words, selectedTagIds, pgNum, sortType);
-            console.log(res_posts);
             
             //result posts total_countのその値を取得しPostから削除
             let total_count = 0;
