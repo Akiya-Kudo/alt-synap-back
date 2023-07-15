@@ -13,7 +13,7 @@ export class PostService {
 
     async searchPostFromTitleAndTags (
         words: string[], 
-        selected_tids: number[],
+        selected_tid: number,
         pg_num: number,
         sort_type_num: number,
     ) : Promise<PostWithTagsAndUserAndTotalCount[]>{
@@ -23,9 +23,9 @@ export class PostService {
             const tag_query = Prisma.sql`SELECT p.uuid_pid 
             FROM posts AS p 
             LEFT JOIN post_tags AS pt ON p.uuid_pid = pt.uuid_pid 
-            WHERE pt.tid IN (${ selected_tids.length > 0 && Prisma.join(selected_tids) })
+            WHERE pt.tid = ${ selected_tid && selected_tid }
             GROUP BY p.uuid_pid
-            HAVING COUNT(DISTINCT pt.tid) = ${ selected_tids.length }`
+            HAVING COUNT(DISTINCT pt.tid) = ${ selected_tid ? 1 : 0 }`
 
             const sort_condition = sort_type_num == 0 ? Prisma.sql`ORDER BY p.likes_num DESC` : Prisma.sql`ORDER BY p.timestamp DESC`
 
@@ -49,15 +49,76 @@ export class PostService {
             WHERE p.deleted = FALSE
             AND p.publish = TRUE 
             ${ words.length > 0 ? Prisma.join(word_conditions, '') : Prisma.sql`` }
-            ${ selected_tids.length > 0 ? Prisma.sql` AND p.uuid_pid IN (${tag_query}) ` : Prisma.sql`` }
+            ${ selected_tid ? Prisma.sql` AND p.uuid_pid IN (${tag_query}) ` : Prisma.sql`` }
             GROUP BY p.uuid_pid, u.uuid_uid, u.user_name, u.user_image
             ${ sort_condition } 
             LIMIT 20 OFFSET ${ pg_num } * 20;
             `
 
-            return await this.prisma.$queryRaw(execute_sql, ...words, ...selected_tids, pg_num)
+            // const test_post_search = await this.prisma.posts.findMany({
+            //     where: {
+            //         deleted: false,
+            //         publish: true,
+            //         OR: [
+            //             { title_tags_search_text: { contains: words[0] } },
+            //             { title_tags_search_text: { contains: words[1] } }
+            //         ]
+            //     },
+            //     select: {
+            //         uuid_pid: true,
+            //         uuid_uid: true,
+            //         title: true,
+            //         top_link: true,
+            //         top_image: true,
+            //         timestamp: true,
+            //         likes_num: true,
+            //         post_tags: {
+            //             select: {
+            //                 tags: {
+            //                     select: {
+            //                         tid: true,
+            //                         tag_name: true,
+            //                         display_name: true,
+            //                         tag_image: true
+            //                     }
+            //                 }
+            //             }
+            //         },
+            //         users: {
+            //             select: {
+            //                 uuid_uid: true,
+            //                 user_name: true,
+            //                 user_image: true
+            //             }
+            //         },
+            //     },
+            //     orderBy: {
+            //         likes_num: "desc"
+            //     },
+            //     take: 20,
+            //     skip: pg_num * 20
+            // })
+            // log(test_post_search)
+
+            return await this.prisma.$queryRaw(execute_sql, ...words, selected_tid, pg_num)
         } catch ( error ) {
             throw new HttpException("Faild to seatch Post", HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    async countTotalPosts(words: string[], selected_tid: number) : Promise<number>{
+        const words_conditions = words.map( word => ({ title_tags_search_text: { contains: word }}) )
+        try {
+            return this.prisma.posts.count({
+                where: {
+                    deleted: false,
+                    publish: true,
+                    AND: words ? words_conditions : undefined,
+                    post_tags: selected_tid ? { some: {tid: selected_tid} } : undefined
+                }
+            })
+        } catch ( error ) {
+            throw new HttpException("Faild to count total hit Posts", HttpStatus.BAD_REQUEST)
         }
     }
 
@@ -74,7 +135,7 @@ export class PostService {
                 let pts = [] as {tid: number, uuid_pid: string}[]
                 let tags_newPost = [] as {tid: number, tag_name: string, tag_content_num: number}[]
 
-                if (postData.uuid_pid==null || postData.uuid_pid==undefined) {
+                if (postData.uuid_pid == null || postData.uuid_pid == undefined) {
                 // create post
                     // get uuid_uid
                     const { uuid_uid } = await prisma.users.findUniqueOrThrow({
