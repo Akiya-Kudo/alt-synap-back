@@ -5,7 +5,7 @@ import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { TokenGuard } from 'src/auth/token.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { TagService } from 'src/tag/tag.service';
-import { searchPostOutput } from 'src/custom_models/query.model';
+import { PostWithTagsAndUser } from 'src/custom_models/query.model';
 
 @Resolver()
 export class PostResolver {
@@ -28,10 +28,10 @@ export class PostResolver {
         }
     }
 
-    @Query(() => searchPostOutput, { name: "search_post" })
+    @Query(() => [PostWithTagsAndUser], { name: "search_post" })
     async searchPost(
         @Args('searchString') searchString: string,
-        @Args('selectedTagIds', { type: () => [Int], nullable: 'items' }) selectedTagIds: number[],
+        @Args('selectedTagId', { type: () => Int, nullable: true }) selectedTagId: number,
         @Args('pgNum', {type: () => Int}) pgNum:number,
         @Args('sortType', {type: () => Int}) sortType:number
     ) {
@@ -41,7 +41,7 @@ export class PostResolver {
             const words = searchString.toLowerCase().replace(/　/g, ' ').split(' ').filter( word => word && !excludes.includes(word) )
 
             //posts search from title & selected tags 
-            let res_posts = await this.postService.searchPostFromTitleAndTags(words, selectedTagIds, pgNum, sortType);
+            let res_posts = await this.postService.searchPostFromTitleAndTags(words, selectedTagId, pgNum, sortType);
             
             //result posts total_countのその値を取得しPostから削除
             let total_count = 0;
@@ -51,10 +51,26 @@ export class PostResolver {
                 return post
             })
 
-            return {
-                posts: res_posts,
-                total_count
-            }
+            return res_posts
+        } catch (error) {
+            console.error(error);
+            throw new HttpException("Faild to search Post by title", HttpStatus.BAD_REQUEST)
+            
+        }
+    }
+
+    @Query(() => Number, { name: "count_total_posts" })
+    async countTotalPosts(
+        @Args('searchString') searchString: string,
+        @Args('selectedTagId', { type: () => Int, nullable: true }) selectedTagId: number
+    ) {
+        try {
+            //引数の整形 : ( 引数のString => lowerケース変換 => 空白で分類配列化 => exclude wordを除外 )
+            const excludes = ["a", "and", "the", "are", "is"]
+            const words = searchString.toLowerCase().replace(/　/g, ' ').split(' ').filter( word => word && !excludes.includes(word) )
+
+            //posts count from title & selected tags 
+            return await this.postService.countTotalPosts(words, selectedTagId);
         } catch (error) {
             console.error(error);
             throw new HttpException("Faild to search Post by title", HttpStatus.BAD_REQUEST)

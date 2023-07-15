@@ -87,7 +87,8 @@ type PostWithTagsAndUser {
 }
 
 type Query {
-  search_post(pgNum: Int!, searchString: String!, selectedTagIds: [Int]!, sortType: Int!): searchPostOutput!
+  count_total_posts(searchString: String!, selectedTagId: Int): Float!
+  search_post(pgNum: Int!, searchString: String!, selectedTagId: Int, sortType: Int!): [PostWithTagsAndUser!]!
   search_tag(searchString: String!): [Tag!]!
   user(uid: String!): User
   users_all: [User]!
@@ -132,11 +133,6 @@ input createUserInput {
   lang_type: Int
   uid: ID!
   uuid_uid: ID!
-}
-
-type searchPostOutput {
-  posts: [PostWithTagsAndUser]!
-  total_count: Int
 }
 
 input updateUserInput {
