@@ -11,52 +11,52 @@ export class Post {
   uuid_pid: string;
 
   @Field({ nullable: true })
-  uuid_uid: string;
+  uuid_uid?: string;
 
   @Field({ nullable: true })
-  title: string;
+  title?: string;
 
   @Field({ nullable: true })
-  title_lower: string;
+  title_lower?: string;
   
   @Field({ nullable: true })
-  title_tags_search_text: string;
+  title_tags_search_text?: string;
 
   @Field({ nullable: true })
-  top_image: string;
+  top_image?: string;
 
   @Field({ nullable: true })
-  top_link: string;
+  top_link?: string;
 
   @Field( type => Int, { nullable: true })
-  content_type: number;
+  content_type?: number;
 
   @Field( type => Int, { nullable: true })
-  likes_num: number;
+  likes_num?: number;
 
   @Field( type => GraphQLISODateTime, { nullable: true })
-  timestamp: Date;
+  timestamp?: Date;
 
   @Field( type => Boolean, { nullable: true })
-  publish: boolean;
+  publish?: boolean;
 
   @Field( type => Boolean, { nullable: true })
-  deleted: boolean;
+  deleted?: boolean;
 
 
   @Field( type => User, { nullable: true })
-  users: User
+  users?: User
 
   @Field( type => ArticleContent, { nullable: true })
-  article_contents: ArticleContent;
+  article_contents?: ArticleContent;
 
   @Field( type => SourceContent, { nullable: true })
-  source_contents: SourceContent;
+  source_contents?: SourceContent;
 
 
   @Field( type => [PostTag], {nullable: true })
-  post_tags: PostTag[];
+  post_tags?: PostTag[];
 
   @Field( type => [Like], { nullable: true })
-  likes: Like[];
+  likes?: Like[];
 }

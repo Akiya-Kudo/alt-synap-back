@@ -4,18 +4,18 @@ import { Tag } from 'src/tag/tag.model';
 
 @ObjectType()
 export class PostTag {
-  @Field(() => ID)
-  uuid_pid: string;
+  @Field(() => ID, { nullable: true })
+  uuid_pid?: string;
 
-  @Field(() => Int)
-  tid: number;
+  @Field(() => Int, { nullable: true })
+  tid?: number;
 
   @Field( type => GraphQLISODateTime, { nullable: true })
-  timestamp: Date;
+  timestamp?: Date;
 
   @Field( type => Post, { nullable: true })
-  posts: Post;
+  posts?: Post;
 
   @Field( type => Tag, { nullable: true })
-  tags: Tag;
+  tags?: Tag;
 }

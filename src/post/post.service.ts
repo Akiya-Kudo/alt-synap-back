@@ -14,93 +14,54 @@ export class PostService {
     async searchPostFromTitleAndTags (
         words: string[], 
         selected_tid: number,
-        pg_num: number,
+        offset: number,
         sort_type_num: number,
-    ) : Promise<PostWithTagsAndUserAndTotalCount[]>{
+    ) : Promise<Post[]>{
         try {
-            const word_conditions = words.map((word, _i) =>  Prisma.sql` AND p.title_tags_search_text LIKE likequery(${words[_i]}) `)
+            const words_conditions = words ? words.map( word => ({ title_tags_search_text: { contains: word }}) ) : []
+            const sort_conditions: Prisma.postsOrderByWithRelationAndSearchRelevanceInput[] =
+                sort_type_num == 0 ? [{ likes_num: "desc" }] : [{ timestamp: "desc" }];
 
-            const tag_query = Prisma.sql`SELECT p.uuid_pid 
-            FROM posts AS p 
-            LEFT JOIN post_tags AS pt ON p.uuid_pid = pt.uuid_pid 
-            WHERE pt.tid = ${ selected_tid && selected_tid }
-            GROUP BY p.uuid_pid
-            HAVING COUNT(DISTINCT pt.tid) = ${ selected_tid ? 1 : 0 }`
-
-            const sort_condition = sort_type_num == 0 ? Prisma.sql`ORDER BY p.likes_num DESC` : Prisma.sql`ORDER BY p.timestamp DESC`
-
-            const execute_sql = 
-            Prisma.sql`
-            SELECT
-                p.uuid_pid, 
-                p.uuid_uid, 
-                p.title,
-                p.top_link, 
-                p.top_image, 
-                p.timestamp,
-                p.likes_num,
-                JSON_AGG(JSON_BUILD_OBJECT( 'tid', t.tid, 'tag_name', t.tag_name, 'display_name', t.display_name, 'tag_image', t.tag_image )) AS tags,
-                JSON_BUILD_OBJECT( 'uuid_uid', u.uuid_uid, 'user_name', u.user_name, 'user_image', u.user_image ) AS user,
-                COUNT(*) OVER() as total_count
-            FROM posts AS p
-            LEFT JOIN post_tags AS pt ON p.uuid_pid = pt.uuid_pid
-            LEFT JOIN tags AS t ON pt.tid = t.tid
-            JOIN users AS u ON p.uuid_uid = u.uuid_uid
-            WHERE p.deleted = FALSE
-            AND p.publish = TRUE 
-            ${ words.length > 0 ? Prisma.join(word_conditions, '') : Prisma.sql`` }
-            ${ selected_tid ? Prisma.sql` AND p.uuid_pid IN (${tag_query}) ` : Prisma.sql`` }
-            GROUP BY p.uuid_pid, u.uuid_uid, u.user_name, u.user_image
-            ${ sort_condition } 
-            LIMIT 20 OFFSET ${ pg_num } * 20;
-            `
-
-            // const test_post_search = await this.prisma.posts.findMany({
-            //     where: {
-            //         deleted: false,
-            //         publish: true,
-            //         OR: [
-            //             { title_tags_search_text: { contains: words[0] } },
-            //             { title_tags_search_text: { contains: words[1] } }
-            //         ]
-            //     },
-            //     select: {
-            //         uuid_pid: true,
-            //         uuid_uid: true,
-            //         title: true,
-            //         top_link: true,
-            //         top_image: true,
-            //         timestamp: true,
-            //         likes_num: true,
-            //         post_tags: {
-            //             select: {
-            //                 tags: {
-            //                     select: {
-            //                         tid: true,
-            //                         tag_name: true,
-            //                         display_name: true,
-            //                         tag_image: true
-            //                     }
-            //                 }
-            //             }
-            //         },
-            //         users: {
-            //             select: {
-            //                 uuid_uid: true,
-            //                 user_name: true,
-            //                 user_image: true
-            //             }
-            //         },
-            //     },
-            //     orderBy: {
-            //         likes_num: "desc"
-            //     },
-            //     take: 20,
-            //     skip: pg_num * 20
-            // })
-            // log(test_post_search)
-
-            return await this.prisma.$queryRaw(execute_sql, ...words, selected_tid, pg_num)
+            return await this.prisma.posts.findMany({
+                where: {
+                    deleted: false,
+                    publish: true,
+                    AND: words ? words_conditions : undefined,
+                    post_tags: selected_tid ? { some: {tid: selected_tid} } : undefined
+                },
+                select: {
+                    uuid_pid: true,
+                    uuid_uid: true,
+                    title: true,
+                    top_link: true,
+                    top_image: true,
+                    timestamp: true,
+                    likes_num: true,
+                    content_type: true,
+                    post_tags: {
+                        select: {
+                            tags: {
+                                select: {
+                                    tid: true,
+                                    tag_name: true,
+                                    display_name: true,
+                                    tag_image: true
+                                }
+                            }
+                        }
+                    },
+                    users: {
+                        select: {
+                            uuid_uid: true,
+                            user_name: true,
+                            user_image: true
+                        }
+                    },
+                },
+                orderBy: sort_conditions,
+                take: 20,
+                skip: offset
+            })
         } catch ( error ) {
             throw new HttpException("Faild to seatch Post", HttpStatus.BAD_REQUEST)
         }
@@ -261,3 +222,43 @@ export class PostService {
         }
     }
 }
+
+
+//前の生クエリの実装れい
+            // const word_conditions = words.map((word, _i) =>  Prisma.sql` AND p.title_tags_search_text LIKE likequery(${words[_i]}) `)
+
+            // const tag_query = Prisma.sql`SELECT p.uuid_pid 
+            // FROM posts AS p 
+            // LEFT JOIN post_tags AS pt ON p.uuid_pid = pt.uuid_pid 
+            // WHERE pt.tid = ${ selected_tid && selected_tid }
+            // GROUP BY p.uuid_pid
+            // HAVING COUNT(DISTINCT pt.tid) = ${ selected_tid ? 1 : 0 }`
+
+            // const sort_condition = sort_type_num == 0 ? Prisma.sql`ORDER BY p.likes_num DESC` : Prisma.sql`ORDER BY p.timestamp DESC`
+
+            // const execute_sql = 
+            // Prisma.sql`
+            // SELECT
+            //     p.uuid_pid, 
+            //     p.uuid_uid, 
+            //     p.title,
+            //     p.top_link, 
+            //     p.top_image, 
+            //     p.timestamp,
+            //     p.likes_num,
+            //     JSON_AGG(JSON_BUILD_OBJECT( 'tid', t.tid, 'tag_name', t.tag_name, 'display_name', t.display_name, 'tag_image', t.tag_image )) AS tags,
+            //     JSON_BUILD_OBJECT( 'uuid_uid', u.uuid_uid, 'user_name', u.user_name, 'user_image', u.user_image ) AS users,
+            //     COUNT(*) OVER() as total_count
+            // FROM posts AS p
+            // LEFT JOIN post_tags AS pt ON p.uuid_pid = pt.uuid_pid
+            // LEFT JOIN tags AS t ON pt.tid = t.tid
+            // JOIN users AS u ON p.uuid_uid = u.uuid_uid
+            // WHERE p.deleted = FALSE
+            // AND p.publish = TRUE 
+            // ${ words.length > 0 ? Prisma.join(word_conditions, '') : Prisma.sql`` }
+            // ${ selected_tid ? Prisma.sql` AND p.uuid_pid IN (${tag_query}) ` : Prisma.sql`` }
+            // GROUP BY p.uuid_pid, u.uuid_uid, u.user_name, u.user_image
+            // ${ sort_condition } 
+            // LIMIT 20 OFFSET ${ offset } * 20;
+            // ` 
+            // return await this.prisma.$queryRaw(execute_sql, ...words, selected_tid, offset)

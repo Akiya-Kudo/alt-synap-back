@@ -59,36 +59,14 @@ type Post {
 type PostTag {
   posts: Post
   tags: Tag
-  tid: Int!
+  tid: Int
   timestamp: DateTime
-  uuid_pid: ID!
-}
-
-type PostWithTagsAndUser {
-  article_contents: ArticleContent
-  content_type: Int
-  deleted: Boolean
-  likes: [Like!]
-  likes_num: Int
-  post_tags: [PostTag!]
-  publish: Boolean
-  source_contents: SourceContent
-  tags: [Tag]
-  timestamp: DateTime
-  title: String
-  title_lower: String
-  title_tags_search_text: String
-  top_image: String
-  top_link: String
-  user: User
-  users: User
-  uuid_pid: ID!
-  uuid_uid: String
+  uuid_pid: ID
 }
 
 type Query {
   count_total_posts(searchString: String!, selectedTagId: Int): Float!
-  search_post(pgNum: Int!, searchString: String!, selectedTagId: Int, sortType: Int!): [PostWithTagsAndUser!]!
+  search_post(offset: Int!, searchString: String!, selectedTagId: Int, sortType: Int!): [Post!]!
   search_tag(searchString: String!): [Tag!]!
   user(uid: String!): User
   users_all: [User]!

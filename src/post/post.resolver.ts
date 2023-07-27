@@ -6,6 +6,7 @@ import { TokenGuard } from 'src/auth/token.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { TagService } from 'src/tag/tag.service';
 import { PostWithTagsAndUser } from 'src/custom_models/query.model';
+import { Post } from './post.model';
 
 @Resolver()
 export class PostResolver {
@@ -28,11 +29,11 @@ export class PostResolver {
         }
     }
 
-    @Query(() => [PostWithTagsAndUser], { name: "search_post" })
+    @Query(() => [Post], { name: "search_post" })
     async searchPost(
         @Args('searchString') searchString: string,
         @Args('selectedTagId', { type: () => Int, nullable: true }) selectedTagId: number,
-        @Args('pgNum', {type: () => Int}) pgNum:number,
+        @Args('offset', {type: () => Int}) offset:number,
         @Args('sortType', {type: () => Int}) sortType:number
     ) {
         try {
@@ -41,15 +42,7 @@ export class PostResolver {
             const words = searchString.toLowerCase().replace(/　/g, ' ').split(' ').filter( word => word && !excludes.includes(word) )
 
             //posts search from title & selected tags 
-            let res_posts = await this.postService.searchPostFromTitleAndTags(words, selectedTagId, pgNum, sortType);
-            
-            //result posts total_countのその値を取得しPostから削除
-            let total_count = 0;
-            if (res_posts.length > 0) total_count = Number(res_posts[0].total_count)
-            res_posts =res_posts.map(post => {
-                delete post.total_count
-                return post
-            })
+            let res_posts = await this.postService.searchPostFromTitleAndTags(words, selectedTagId, offset, sortType);
 
             return res_posts
         } catch (error) {

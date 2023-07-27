@@ -5,20 +5,20 @@ import { PostTag } from 'src/posts_tag/posts_tag.model';
 @ObjectType()
 export class Tag {
   @Field( type => Int, { nullable: true })
-  tid: number;
+  tid?: number;
 
   @Field({ nullable: true })
-  tag_name: string;
+  tag_name?: string;
 
   @Field({ nullable: true })
-  display_name: string;
+  display_name?: string;
   
   @Field({ nullable: true })
-  tag_image: string;
+  tag_image?: string;
 
   @Field( type => Int, { nullable: true })
-  tag_content_num: number;
+  tag_content_num?: number;
 
   @Field( type => [PostTag], { nullable: true })
-  post_tags: PostTag[];
+  post_tags?: PostTag[];
 }

@@ -17,12 +17,3 @@ export class PostWithTagsAndUserAndTotalCount extends PostWithTagsAndUser {
     @Field( type => Int, { nullable: true } )
     total_count: bigint
 }
-
-// @ObjectType()
-// export class searchPostOutput {
-//     @Field( type => [PostWithTagsAndUser], { nullable: "items" })
-//     posts: PostWithTagsAndUser[]
-
-//     @Field( type => Int, { nullable: true })
-//     total_count: number
-// }

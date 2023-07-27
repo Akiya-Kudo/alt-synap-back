@@ -8,32 +8,32 @@ import { Post } from 'src/post/post.model';
 @ObjectType()
 export class User {
   @Field( type => ID, { nullable: true })
-  uid: string;
+  uid?: string;
 
   @Field( type => ID, { nullable: true })
-  uuid_uid: string;
+  uuid_uid?: string;
 
   @Field({ nullable: true })
-  user_name: string;
+  user_name?: string;
 
   @Field({ nullable: true })
-  user_image: string;
+  user_image?: string;
 
   @Field({ nullable: true })
-  comment: string;
+  comment?: string;
 
   @Field( type => Int, { nullable: true})
-  followee_num: number;
+  followee_num?: number;
 
   @Field( type => Int, { nullable: true })
-  follower_num: number;
+  follower_num?: number;
 
   @Field( type => Int, { nullable: true })
-  lang_type: number;
+  lang_type?: number;
 
   @Field( type => [Post], { nullable: true })
-  posts: Post[];
+  posts?: Post[];
 
   @Field( type => [Like], { nullable: true })
-  likes: Like[];
+  likes?: Like[];
 }
