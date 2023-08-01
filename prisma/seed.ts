@@ -16,7 +16,57 @@ async function main() {
         })
     }
 
-    for (let index = 0; index < 100; index++) {
+//link collections 前処理 user追加
+const image_path_u = "https://firebasestorage.googleapis.com/v0/b/tipsy-c5831.appspot.com/o/" + 2 + ".jpg?alt=media&token=fa85de29-6f27-4d9e-bae5-eac4f8e24357"
+        const user = await prisma.users.create({
+            data: {
+                uid: faker.string.alphanumeric(28),
+                uuid_uid: "c93cd1fe-85ff-4fd3-8d67-3d1cd12b91bb",
+                user_name: faker.person.fullName(),
+                user_image: image_path_u,
+                comment: faker.word.words(2),
+            }
+        })
+// link
+    for (let index = 0; index < 10; index++) {
+        const link = await prisma.links.create({
+            data: {
+                uuid_uid: "c93cd1fe-85ff-4fd3-8d67-3d1cd12b91bb",
+                link_name: faker.animal.cat(),
+                image_path: "https://th.bing.com/th/id/OIP.Zqez7MQnPnxA_ivGrJjF0QHaHa?pid=ImgDet&rs=1", 
+                explanation: faker.company.name(),
+                url_scheme: "https://www.pinterest.jp/search",
+                query: "q",
+                joint: "%20",
+                other_queries: null,
+                genre: 0,
+                is_path_search: false,
+                publish: true,
+            }
+        })
+    }
+// collection
+    for (let index=0; index < 2; index++) {
+        const collection = await prisma.collections.create({
+            data: {
+                uuid_uid: "c93cd1fe-85ff-4fd3-8d67-3d1cd12b91bb",
+                collection_name: faker.airline.airplane.name,
+            }
+        })
+// link collection
+        for (let i=0; i < 5; i++) {
+            const link_collection = await prisma.link_collections.create({
+                data: {
+                    cid: index + 1,
+                    lid: (index + 1)*(i+1),
+                    uuid_uid: "c93cd1fe-85ff-4fd3-8d67-3d1cd12b91bb",
+                    deleted: false,
+                }
+            })
+        }
+    }
+
+    for (let index = 0; index < 10; index++) {
 //user
         const user_uuid = faker.string.uuid()
         const ramnum = faker.number.int(31)

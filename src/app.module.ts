@@ -13,6 +13,12 @@ import { PostsTagModule } from './posts_tag/posts_tag.module';
 import { LikeModule } from './like/like.module';
 import { ArticleContentModule } from './article_content/article_content.module';
 import { AuthModule } from './auth/auth.module';
+import { LinkService } from './link/link.service';
+import { LinkModule } from './link/link.module';
+import { CollectionService } from './collection/collection.service';
+import { CollectionResolver } from './collection/collection.resolver';
+import { CollectionModule } from './collection/collection.module';
+import { LinkCollectionModule } from './link_collection/link_collection.module';
 
 @Module({
   imports: [
@@ -29,8 +35,11 @@ import { AuthModule } from './auth/auth.module';
     PostsTagModule,
     LikeModule,
     AuthModule,
+    LinkModule,
+    CollectionModule,
+    LinkCollectionModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, LinkService, CollectionService, CollectionResolver],
 })
 export class AppModule {}
