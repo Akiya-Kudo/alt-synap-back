@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
 }
 
@@ -38,8 +38,8 @@ model posts {
   source_contents        source_contents?
 
   @@index([uuid_uid], map: "fki_user_uuid_to_posts_foreign")
-  @@index([title_lower(ops: raw("gin_bigm_ops"))], map: "pg_idx_title_lower", type: Gin)
   @@index([title_tags_search_text(ops: raw("gin_bigm_ops"))], map: "pg_idx_title_tags_text", type: Gin)
+  @@index([uuid_uid], map: "fki_user_uuid_to_link_collections_foreign")
 }
 
 model tags {
@@ -52,16 +52,19 @@ model tags {
 }
 
 model users {
-  uid          String  @id @db.VarChar(28)
-  user_name    String? @db.VarChar(255)
-  user_image   String? @db.VarChar(2048)
-  comment      String? @db.VarChar(255)
-  follower_num Int     @default(0)
-  followee_num Int     @default(0)
-  lang_type    Int     @default(0) @db.SmallInt
-  uuid_uid     String  @unique(map: "uuid_unique") @db.Uuid
-  likes        likes[]
-  posts        posts[]
+  uid              String             @id @db.VarChar(28)
+  user_name        String?            @db.VarChar(255)
+  user_image       String?            @db.VarChar(2048)
+  comment          String?            @db.VarChar(255)
+  follower_num     Int                @default(0)
+  followee_num     Int                @default(0)
+  lang_type        Int                @default(0) @db.SmallInt
+  uuid_uid         String             @unique(map: "uuid_unique") @db.Uuid
+  collections      collections[]
+  likes            likes[]
+  link_collections link_collections[]
+  links            links[]
+  posts            posts[]
 }
 
 model post_tags {
@@ -86,4 +89,46 @@ model article_contents {
   content  Json
   uuid_pid String @id(map: "article_contents_primary") @db.Uuid
   posts    posts  @relation(fields: [uuid_pid], references: [uuid_pid], onDelete: NoAction, onUpdate: NoAction, map: "post_to_blog_contents_foreign")
+}
+
+model collections {
+  cid              Int                @id(map: "cid_primary") @default(autoincrement())
+  uuid_uid         String             @db.Uuid
+  collection_name  String             @db.VarChar(50)
+  users            users              @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "users_to_collections_foreign")
+  link_collections link_collections[]
+
+  @@index([uuid_uid], map: "fki_user_uuid_to_collections_foreign")
+}
+
+model link_collections {
+  lid         Int
+  cid         Int
+  uuid_uid    String      @db.Uuid
+  deleted     Boolean     @default(false)
+  collections collections @relation(fields: [cid], references: [cid], onDelete: NoAction, onUpdate: NoAction, map: "collections_to_link_collections_foreign")
+  links       links       @relation(fields: [lid], references: [lid], onDelete: NoAction, onUpdate: NoAction, map: "links_to_link_collections_foreign")
+  users       users       @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "users_to_link_collections_foreign")
+
+  @@id([lid, cid], map: "link_collection_composite_primary")
+}
+
+model links {
+  lid              Int                @id(map: "links_primary") @default(autoincrement())
+  uuid_uid         String             @db.Uuid
+  link_name        String             @db.VarChar(50)
+  image_path       String?            @db.VarChar(2048)
+  explanation      String?            @db.VarChar(100)
+  url_scheme       String             @db.VarChar(500)
+  query            String?            @db.VarChar(50)
+  joint            String?            @db.VarChar(50)
+  other_queries    String?            @db.VarChar(500)
+  genre            Int                @db.SmallInt
+  is_path_search   Boolean            @default(false)
+  publish          Boolean            @default(false)
+  timestamp        DateTime?          @db.Timestamptz(6)
+  link_collections link_collections[]
+  users            users              @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "users_to_likes_foreign")
+
+  @@index([uuid_uid], map: "fki_user_uuid_to_links_foreign")
 }
