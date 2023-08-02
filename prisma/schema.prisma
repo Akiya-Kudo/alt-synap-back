@@ -95,6 +95,7 @@ model collections {
   cid              Int                @id(map: "cid_primary") @default(autoincrement())
   uuid_uid         String             @db.Uuid
   collection_name  String             @db.VarChar(50)
+  deleted          Boolean            @default(false)
   users            users              @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "users_to_collections_foreign")
   link_collections link_collections[]
 

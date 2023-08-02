@@ -58,7 +58,7 @@ const image_path_u = "https://firebasestorage.googleapis.com/v0/b/tipsy-c5831.ap
             const link_collection = await prisma.link_collections.create({
                 data: {
                     cid: index + 1,
-                    lid: (index + 1)*(i+1),
+                    lid: (5*index) + (i+1),
                     uuid_uid: "c93cd1fe-85ff-4fd3-8d67-3d1cd12b91bb",
                     deleted: false,
                 }

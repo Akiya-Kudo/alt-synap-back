@@ -23,7 +23,7 @@ export class PostResolver {
     ) {
         try {
             const uid_token = context.req.idTokenUser.user_id
-            return this.postService.upsertArticlePost(postData, uid_token)
+            return await this.postService.upsertArticlePost(postData, uid_token)
         } catch (error) {
             throw new HttpException("Faild to Upsert Post", HttpStatus.BAD_REQUEST)
         }

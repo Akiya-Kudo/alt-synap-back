@@ -8,25 +8,25 @@ import { User } from 'src/user/user.model';
 @ObjectType()
 export class LinkCollection {
     @Field( type => ID)
-    cid: number;
+    cid?: number;
 
     @Field( type => ID )
-    lid: number;
+    lid?: number;
 
     @Field({ nullable: true })
-    uuid_uid: string;
+    uuid_uid?: string;
 
     @Field( type => Boolean, { nullable: true })
-    deleted: boolean;
+    deleted?: boolean;
 
 
     @Field( type => User, { nullable: true })
-    users: User;
+    users?: User;
 
 
     @Field( type => Collection, { nullable: true })
-    collections: Collection;
+    collections?: Collection;
     
     @Field( type => Link, { nullable: true })
-    links: Link;
+    links?: Link;
 }

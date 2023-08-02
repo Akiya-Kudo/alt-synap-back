@@ -15,6 +15,7 @@ input ArticleContentInput {
 type Collection {
   cid: Int!
   collection_name: String
+  deleted: Boolean
   link_collections: [LinkCollection!]
   users: User
   uuid_uid: String
@@ -67,7 +68,12 @@ type LinkCollection {
 }
 
 type Mutation {
+  add_link_to_collection(cid: Int!, lid: Int!, uuid_uid: String!): LinkCollection!
   create_user(userData: createUserInput!): User!
+  delete_link(lid: Int!): Link!
+  delete_link_collection(cid: Int!, lid: Int!): LinkCollection!
+  remove_collection(cid: Int!): Collection!
+  remove_link_from_collection(cid: Int!, lid: Int!): LinkCollection!
   update_user_info(userData: updateUserInput!): User!
   upsert_article_post(postData: upsertArticlePostInput!): upsertArticlePostOutput!
 }
@@ -102,10 +108,12 @@ type PostTag {
 
 type Query {
   count_total_posts(searchString: String!, selectedTagId: Int): Float!
+  get_link_collections_used(uuid_uid: String!): [LinkCollection!]
+  get_link_made_by_user(uuid_uid: String!): [Link!]
+  get_published_links: [Link!]
   search_post(offset: Int!, searchString: String!, selectedTagId: Int, sortType: Int!): [Post!]!
   search_tag(searchString: String!): [Tag!]!
   user(uid: String!): User
-  users_all: [User]!
 }
 
 type SourceContent {
