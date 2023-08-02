@@ -40,6 +40,6 @@ import { LinkCollectionModule } from './link_collection/link_collection.module';
     LinkCollectionModule,
   ],
   controllers: [AppController],
-  providers: [AppService, LinkService, CollectionService, CollectionResolver],
+  providers: [AppService],
 })
 export class AppModule {}

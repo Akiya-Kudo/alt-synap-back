@@ -22,6 +22,7 @@ CREATE TABLE "collections" (
     "cid" SERIAL NOT NULL,
     "uuid_uid" UUID NOT NULL,
     "collection_name" VARCHAR(50) NOT NULL,
+    "deleted" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "cid_primary" PRIMARY KEY ("cid")
 );

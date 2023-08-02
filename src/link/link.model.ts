@@ -45,9 +45,9 @@ export class Link {
 
 
     @Field( type => User, { nullable: true })
-    users: User;
+    users?: User;
 
 
     @Field( type => [LinkCollection], { nullable: true } )
-    link_collections: LinkCollection[];
+    link_collections?: LinkCollection[];
 }

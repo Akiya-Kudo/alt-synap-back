@@ -10,16 +10,19 @@ export class Collection {
     cid: number;
 
     @Field({ nullable: true })
-    uuid_uid: string;
+    uuid_uid?: string;
 
     @Field({ nullable: true })
     collection_name: string;
 
+    @Field({ nullable: true })
+    deleted?: boolean;
+
 
     @Field( type => User, { nullable: true })
-    users: User;
+    users?: User;
 
 
     @Field( type => [LinkCollection], { nullable: true } )
-    link_collections: LinkCollection[];
+    link_collections?: LinkCollection[];
 }
