@@ -71,7 +71,7 @@ type Mutation {
   add_link_to_collection(cid: Int!, lid: Int!, uuid_uid: String!): LinkCollection!
   create_user(userData: createUserInput!): User!
   delete_link(lid: Int!): Link!
-  delete_link_collection(cid: Int!, lid: Int!): LinkCollection!
+  delete_link_collection(lid: Int!, uuid_uid: String!): [LinkCollection!]!
   remove_collection(cid: Int!): Collection!
   remove_link_from_collection(cid: Int!, lid: Int!): LinkCollection!
   update_user_info(userData: updateUserInput!): User!

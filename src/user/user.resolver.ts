@@ -17,8 +17,10 @@ export class UserResolver {
     uid: string
   ) {
     const login_user: User = await this.userService.user({ uid });
-    const collections = await this.collectionService.userCollections(login_user.uuid_uid)
-    login_user.collections = collections
+    if (login_user) {
+      const collections = await this.collectionService.userCollections(login_user.uuid_uid)
+      login_user.collections = collections
+    }
     
     return login_user
   }
