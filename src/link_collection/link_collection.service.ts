@@ -12,8 +12,18 @@ export class LinkCollectionService {
                 where: {
                     uuid_uid: uuid_uid,
                 },
-                select: {
-                    links: true
+                include: {
+                    links: {
+                        include: {
+                            users: {
+                                select: {
+                                    uuid_uid: true,
+                                    user_name: true,
+                                    user_image: true,
+                                }
+                            }
+                        }
+                    }
                 }
             })
         } catch ( error ) {
@@ -37,6 +47,9 @@ export class LinkCollectionService {
                     lid: lid,
                     cid: cid,
                     uuid_uid: uuid_uid
+                },
+                include: {
+                    links: true
                 }
             })
         } catch ( error ) {
@@ -58,14 +71,42 @@ export class LinkCollectionService {
         })
     }
 
-    async deleteLinkCollection(lid: number, cid: number) {
-        return this.prisma.link_collections.delete({
-            where: {
-                lid_cid: {
+    async deleteLinkCollection(lid: number, uuid_uid: string) {
+        // return this.prisma.link_collections.delete({
+        //     where: {
+        //         // lid_cid: {
+        //         //     lid: lid,
+        //         //     cid: cid
+        //         // },
+        //         lid_cid: {
+        //             lid: lid
+        //         }
+        //     }
+        //     全てのuserのlidが該当するli_colを削除する必要があります
+        // })
+        try {
+            const userLinkCollections_select_by_lid = await this.prisma.link_collections.findMany({
+                where: {
                     lid: lid,
-                    cid: cid
-                },
-            }
-        })
+                    uuid_uid: uuid_uid,
+                }
+            })
+            //全てのlink_collectionがユーザのcollectinで使用されていないかの確認
+            userLinkCollections_select_by_lid.forEach((li_col: LinkCollection) => {
+                if (li_col.deleted==false) {
+                    throw new HttpException("error there are links which is included by your collections", HttpStatus.BAD_REQUEST)
+                }
+            })
+            const deleted = await this.prisma.link_collections.deleteMany({
+                where: {
+                    lid: lid,
+                    uuid_uid: uuid_uid
+                }
+            })
+            
+            return userLinkCollections_select_by_lid //clientのキャッシュを削除するために使用
+        } catch ( error ) {
+            throw new HttpException("Faild to delete link_collection : " + error, HttpStatus.BAD_REQUEST)
+        }
     }
 }

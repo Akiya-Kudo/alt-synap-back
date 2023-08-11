@@ -28,7 +28,7 @@ const image_path_u = "https://firebasestorage.googleapis.com/v0/b/tipsy-c5831.ap
             }
         })
 // link
-    for (let index = 0; index < 10; index++) {
+    for (let index = 0; index < 40; index++) {
         const link = await prisma.links.create({
             data: {
                 uuid_uid: "c93cd1fe-85ff-4fd3-8d67-3d1cd12b91bb",
@@ -46,7 +46,7 @@ const image_path_u = "https://firebasestorage.googleapis.com/v0/b/tipsy-c5831.ap
         })
     }
 // collection
-    for (let index=0; index < 2; index++) {
+    for (let index=0; index < 8; index++) {
         const collection = await prisma.collections.create({
             data: {
                 uuid_uid: "c93cd1fe-85ff-4fd3-8d67-3d1cd12b91bb",

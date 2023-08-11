@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/_prisma/prisma.service';
 import { Collection } from './collection.model';
+import { log } from 'console';
 
 @Injectable()
 export class CollectionService {
@@ -8,7 +9,7 @@ export class CollectionService {
 
     async userCollections(uuid_uid: string) : Promise<Collection[]>{
         try {
-            return await this.prisma.collections.findMany({
+            const user_collections = await this.prisma.collections.findMany({
                 where: {
                     uuid_uid: uuid_uid,
                     deleted: false,
@@ -16,13 +17,24 @@ export class CollectionService {
                 select: {
                     cid: true,
                     collection_name: true,
+                    uuid_uid: true,
+                    deleted: true,
                     link_collections: {
-                        select: {
-                            links: true
+                        where: {
+                            deleted: false,
+                        },
+                        select: { 
+                            lid: true,
+                            cid: true,
+                            uuid_uid: true,
+                            deleted: true,
+                            links: true ,
                         }
                     }
                 }
             })
+            console.log(user_collections);
+            return user_collections
         } catch ( error ) {
             throw new HttpException("Faild to count total hit Posts", HttpStatus.BAD_REQUEST)
         }
@@ -31,16 +43,14 @@ export class CollectionService {
     async updateCollectionToDeleted(cid: number): Promise<Collection> {
         return await this.prisma.collections.update({
             where: {
-                cid: cid
+                cid: cid 
             },
             data: {
                 deleted: true,
                 link_collections: {
                     updateMany: {
                         where: { cid: cid },
-                        data: {
-                            deleted: true
-                        }
+                        data: { deleted: true }
                     }
                 }
             },

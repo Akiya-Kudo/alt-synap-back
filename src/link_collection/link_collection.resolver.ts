@@ -43,15 +43,15 @@ export class LinkCollectionResolver {
         }
     }
 
-    @Mutation( () => LinkCollection, { name: "delete_link_collection" } )
+    @Mutation( () => [LinkCollection], { name: "delete_link_collection" } )
     async deleteLinkCollection(
         @Args('lid', { type: () => Int! }) lid: number,
-        @Args('cid', { type: () => Int! }) cid: number,
+        @Args('uuid_uid') uuid_uid: string,
     ) {
         try {
-            return await this.linkCollectionService.deleteLinkCollection(lid, cid)
+            return await this.linkCollectionService.deleteLinkCollection(lid, uuid_uid)
         } catch (error) {
-            throw new HttpException("Faild to delete link collection", HttpStatus.BAD_REQUEST)
+            throw new HttpException(error, HttpStatus.BAD_REQUEST)
         }
     }
 }
