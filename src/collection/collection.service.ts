@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/_prisma/prisma.service';
 import { Collection } from './collection.model';
-import { log } from 'console';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class CollectionService {
@@ -53,6 +53,18 @@ export class CollectionService {
                         data: { deleted: true }
                     }
                 }
+            },
+            include: {
+                link_collections: true,
+            }
+        })
+    }
+
+    async createCollection( collection_name: string, uuid_uid: string ): Promise<Collection> {
+        return await this.prisma.collections.create({
+            data: {
+                collection_name: collection_name,
+                uuid_uid: uuid_uid,
             },
             include: {
                 link_collections: true

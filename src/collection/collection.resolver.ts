@@ -17,4 +17,16 @@ export class CollectionResolver {
             throw new HttpException("Faild to remove collection", HttpStatus.BAD_REQUEST)
         }
     }
+
+    @Mutation(() => Collection, { name: "create_collection" })
+    async createCollection(
+        @Args('collection_name', { type: () => String! }) collection_name: string,
+        @Args('uuid_uid', { type: () => String! }) uuid_uid: string,
+    ) {
+        try {
+            return await this.collectionService.createCollection(collection_name, uuid_uid)
+        } catch (error) {
+            throw new HttpException("Faild to create collection: " + error , HttpStatus.BAD_REQUEST)
+        }
+    }
 }
