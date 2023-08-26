@@ -1,8 +1,10 @@
-import { Args, Int, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Resolver } from '@nestjs/graphql';
 import { LinkService } from './link.service';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { Link } from './link.model';
 import { Query } from '@nestjs/graphql';
+import { createLinkInput } from 'src/custom_models/mutation.model';
+import { TokenGuard } from 'src/auth/token.guard';
 
 @Resolver()
 export class LinkResolver {
@@ -36,6 +38,20 @@ export class LinkResolver {
             return  await this.linkService.deleteLink(lid)
         } catch (error) {
             throw new HttpException("Faild to delete link", HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    @Mutation(() => Link, { name: "create_link" })
+    @UseGuards(TokenGuard)
+    async createLink(
+        @Args('linkData') linkData: createLinkInput,
+        @Context() context
+    ) {
+        try {
+            const uid_token = context.req.idTokenUser.user_id
+            return  await this.linkService.createLink(linkData, uid_token)
+        } catch (error) {
+            throw new HttpException("Faild to create new link", HttpStatus.BAD_REQUEST)
         }
     }
 }

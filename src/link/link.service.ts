@@ -2,11 +2,42 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/_prisma/prisma.service';
 import { Link } from './link.model';
+import { createLinkInput } from 'src/custom_models/mutation.model';
 
 
 @Injectable()
 export class LinkService {
     constructor( private prisma: PrismaService ) {}
+
+    async createLink(linkData: createLinkInput, uid_token: string): Promise<Link> {
+        const {link_name, url_scheme, genre } = linkData // not null
+        const { image_path, explanation, query, joint, other_queries, publish, is_path_search } = linkData // nullable
+
+        // get uuid_uid
+        const { uuid_uid } = await this.prisma.users.findUniqueOrThrow({
+            where: { uid: uid_token },
+            select: { uuid_uid: true }
+        })
+
+        return await this.prisma.links.create({
+            data: {
+                link_name,
+                url_scheme,
+                genre,
+                uuid_uid,
+                image_path,
+                explanation,
+                query,
+                joint,
+                other_queries,
+                publish,
+                is_path_search,
+            },
+            include: {
+                users: true
+            }
+        })
+    }
 
     async getAllPublishedLinks(): Promise<Link[]> {
         return await this.prisma.links.findMany({

@@ -69,6 +69,8 @@ type LinkCollection {
 
 type Mutation {
   add_link_to_collection(cid: Int!, lid: Int!, uuid_uid: String!): LinkCollection!
+  create_collection(collection_name: String!, uuid_uid: String!): Collection!
+  create_link(linkData: createLinkInput!): Link!
   create_user(userData: createUserInput!): User!
   delete_link(lid: Int!): Link!
   delete_link_collection(lid: Int!, uuid_uid: String!): [LinkCollection!]!
@@ -152,6 +154,19 @@ type User {
   user_image: String
   user_name: String
   uuid_uid: ID
+}
+
+input createLinkInput {
+  explanation: String
+  genre: Int!
+  image_path: String
+  is_path_search: Boolean!
+  joint: String
+  link_name: String!
+  other_queries: String
+  publish: Boolean!
+  query: String
+  url_scheme: String!
 }
 
 input createUserInput {

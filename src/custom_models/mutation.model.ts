@@ -85,3 +85,36 @@ export class createUserInput {
     @Field( type => Int, { nullable: true })
     lang_type: number;
 }
+
+@InputType()
+export class createLinkInput {
+    @Field()
+    link_name: string;
+        
+    @Field({ nullable: true })
+    image_path: string;
+    
+    @Field({ nullable: true })
+    explanation: string;
+    
+    @Field()
+    url_scheme: string;
+    
+    @Field({ nullable: true })
+    query: string;
+    
+    @Field({ nullable: true })
+    joint: string;
+    
+    @Field({ nullable: true })
+    other_queries: string;
+
+    @Field(type => Int)
+    genre: number
+    
+    @Field( type => Boolean)
+    publish: boolean;
+    
+    @Field( type => Boolean)
+    is_path_search: boolean;
+}
