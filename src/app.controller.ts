@@ -49,18 +49,4 @@ export class AppController {
       uid: uid,
     });
   }
-
-  @Put('user/:uid')
-  async updateUser(
-    @Param('uid') uid: string,
-    @Body()
-    profData: profType,
-  ): Promise<any> {
-    return this.userService.updateUser({
-      where: {
-        uid: uid,
-      },
-      data: profData,
-    });
-  }
 }

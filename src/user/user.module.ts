@@ -3,9 +3,10 @@ import { PrismaModule } from '../_prisma/prisma.module';
 import { UserService } from './user.service';
 import { UserResolver } from './user.resolver';
 import { CollectionModule } from 'src/collection/collection.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [PrismaModule, CollectionModule],
+  imports: [PrismaModule, AuthModule, CollectionModule],
   providers: [UserService, UserResolver],
   exports: [UserService, UserResolver],
 })

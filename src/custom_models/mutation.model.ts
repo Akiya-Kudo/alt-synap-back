@@ -61,17 +61,14 @@ export class upsertArticlePostOutput {
 
 @InputType()
 export class updateUserInput {
-    @Field( type => ID)
-    uid: string;
+    @Field()
+    user_name: string;
 
-    @Field( type => ID )
-    uuid_uid: string;
+    @Field({nullable: true})
+    user_image: string
     
     @Field({ nullable: true })
     comment: string;
-
-    @Field( type => Int, { nullable: true })
-    lang_type: number;
 }
 
 @InputType()
