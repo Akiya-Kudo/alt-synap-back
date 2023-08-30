@@ -33,7 +33,6 @@ export class CollectionService {
                     }
                 }
             })
-            console.log(user_collections);
             return user_collections
         } catch ( error ) {
             throw new HttpException("Faild to count total hit Posts", HttpStatus.BAD_REQUEST)

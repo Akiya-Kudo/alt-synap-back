@@ -177,9 +177,8 @@ input createUserInput {
 
 input updateUserInput {
   comment: String
-  lang_type: Int
-  uid: ID!
-  uuid_uid: ID!
+  user_image: String
+  user_name: String!
 }
 
 input upsertArticlePostInput {

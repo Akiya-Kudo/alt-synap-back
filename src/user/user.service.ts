@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../_prisma/prisma.service';
 import { users, Prisma } from '@prisma/client';
 import { User } from './user.model';
+import { updateUserInput } from 'src/custom_models/mutation.model';
+import { log } from 'console';
 
 @Injectable()
 export class UserService {
@@ -23,7 +25,7 @@ export class UserService {
     // orderBy?: Prisma.usersOrderByWithRelationInput;
   }): Promise<users[]> {
     const { skip, take, cursor, where } = params;
-    return this.prisma.users.findMany({
+    return await this.prisma.users.findMany({
       skip,
       take,
       cursor,
@@ -40,15 +42,27 @@ export class UserService {
     return this.prisma.users.create({ data });
   }
 
-  async updateUser(params: {
-    where: Prisma.usersWhereUniqueInput;
-    data: Prisma.usersUpdateInput;
-  }): Promise<users> {
-    const { where, data } = params;
-    return this.prisma.users.update({
-      data,
-      where,
-    });
+  async updateUser(userData: updateUserInput, uid_token: string) {
+    try {
+      const { uuid_uid } = await this.prisma.users.findUniqueOrThrow({
+        where: { uid: uid_token},
+        select: { uuid_uid: true }
+      })
+      return await this.prisma.users.update({
+        where: { uuid_uid: uuid_uid },
+        data: {
+          user_name: userData.user_name,
+          user_image: userData.user_image,
+          comment: userData.comment
+        },
+        select: {
+          uuid_uid: true,
+          user_name: true,
+          user_image: true,
+          comment: true,
+        }
+      })
+    } catch (error) {throw error}
   }
 
   async deleteUser(where: Prisma.usersWhereUniqueInput): Promise<users> {

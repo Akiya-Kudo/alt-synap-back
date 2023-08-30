@@ -1,8 +1,10 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from './user.model';
 import { UserService } from './user.service';
 import { createUserInput, updateUserInput } from 'src/custom_models/mutation.model';
 import { CollectionService } from 'src/collection/collection.service';
+import { TokenGuard } from 'src/auth/token.guard';
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 
 @Resolver()
 export class UserResolver {
@@ -40,17 +42,17 @@ export class UserResolver {
   }
 
   @Mutation(() => User, { name: "update_user_info" })
+  @UseGuards(TokenGuard)
   async updateUser(
-    @Args('userData') 
-    userData: updateUserInput,
+    @Args('userData') userData: updateUserInput,
+    @Context() context
   ) {
+    try {
+      const uid_token = context.req.idTokenUser.user_id
+      return await this.userService.updateUser(userData, uid_token)
+    } catch (error) {
+        throw new HttpException("Faild to Upsert Post", HttpStatus.BAD_REQUEST)
+    }
 
-    return this.userService.updateUser({
-      where: { uid: userData.uid },
-      data: {
-        comment: userData.comment,
-        lang_type: userData.lang_type,
-      },
-    });
   }
 }
