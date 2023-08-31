@@ -11,6 +11,45 @@ import { PostWithTagsAndUserAndTotalCount } from 'src/custom_models/query.model'
 export class PostService {
     constructor(private prisma: PrismaService) {}
 
+
+    async findPost ( uuid_pid: string, uid_token: string ): Promise<Post> {
+        try {
+            const data = await this.prisma.posts.findUnique({
+                where: {
+                    uuid_pid: uuid_pid
+                },
+                include: {
+                    users: true,
+                    article_contents: true,
+                    post_tags: { include: { tags: true } }
+                }
+            })
+
+            if (!data.publish) {
+                if (uid_token == data.users.uid) {
+                    console.log("authentication success")
+                }
+                else {
+                    throw new HttpException("authentication faild", HttpStatus.BAD_REQUEST)
+                }
+            }
+            if (data.deleted) throw new HttpException("post is already deleted", HttpStatus.BAD_REQUEST)
+            return ({
+                ...data,
+                users: {
+                    ...data.users,
+                    uid: undefined
+                },
+                article_contents: {
+                    uuid_pid: data.article_contents.uuid_pid,
+                    content:  data.article_contents.content
+                }
+            })
+        } catch (error) {
+            throw error
+        }
+    }
+
     async searchPostFromTitleAndTags (
         words: string[], 
         selected_tid: number,
