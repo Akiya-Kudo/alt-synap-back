@@ -113,6 +113,7 @@ type Query {
   get_link_collections_used(uuid_uid: String!): [LinkCollection!]
   get_link_made_by_user(uuid_uid: String!): [Link!]
   get_published_links: [Link!]
+  post(uuid_pid: String!): Post!
   search_post(offset: Int!, searchString: String!, selectedTagId: Int, sortType: Int!): [Post!]!
   search_tag(searchString: String!): [Tag!]!
   user(uid: String!): User

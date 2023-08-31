@@ -2,7 +2,7 @@ import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PostService } from './post.service';
 import { upsertArticlePostInput, upsertArticlePostOutput } from 'src/custom_models/mutation.model';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
-import { TokenGuard } from 'src/auth/token.guard';
+import { TokenGuard, TokenSecretGuard } from 'src/auth/token.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { TagService } from 'src/tag/tag.service';
 import { PostWithTagsAndUser } from 'src/custom_models/query.model';
@@ -14,6 +14,22 @@ export class PostResolver {
         private postService: PostService,
         private tagService: TagService,
         private authServise: AuthService) {} //これいる？？消して良い？？
+
+    @Query(() => Post, { name: "post" })
+    @UseGuards(TokenSecretGuard)
+    async getPost(
+        @Args('uuid_pid') uuid_pid: string,
+        @Context() context
+    ) {
+        try {
+            const uid_token: string = context.req.idTokenUser?.user_id 
+            return await this.postService.findPost(uuid_pid, uid_token)
+        } catch (error) {
+            console.error(error);
+            throw new HttpException("Faild to get Post", HttpStatus.BAD_REQUEST)
+        }
+    }
+
 
     @Mutation(() => upsertArticlePostOutput, { name: "upsert_article_post"})
     @UseGuards(TokenGuard)

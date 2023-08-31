@@ -8,8 +8,8 @@ export class ArticleContent {
   uuid_pid: string;
 
   @Field( type => GraphQLJSONObject, { nullable: true })
-  content: JSON;
+  content: any;
 
   @Field( type => Post, { nullable: true })
-  posts: Post;
+  posts?: Post;
 }
