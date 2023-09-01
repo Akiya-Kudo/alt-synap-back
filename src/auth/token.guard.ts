@@ -20,9 +20,10 @@ export class TokenGuard implements CanActivate {
     const idToken = bearerIdToken.split(' ')[1];
     try {
       request['idTokenUser'] = await this.authServise.validateIdToken(idToken);
-      log("token guard successed");
+      // log("token guard successed");
       return true;
     } catch (error) {
+      log("token guard profivted")
       throw new UnauthorizedException("Invalid Access:" + error.status);
     }
   }
@@ -41,15 +42,16 @@ export class TokenSecretGuard implements CanActivate {
     const idToken = bearerIdToken?.split(' ')[1];
     if (bearerIdToken==undefined || idToken==undefined) {
       request['idTokenUser'] = null
-      log("token guard escaped. no token");
+      // log("token guard escaped. no token");
       return true
       // throw new UnauthorizedException("Invalid Access:" + "401")
     }
     try {
       request['idTokenUser'] = await this.authServise.validateIdToken(idToken);
-      log("token guard successed");
+      // log("token guard successed");
       return true;
     } catch (error) {
+      log("token guard profivted")
       throw new UnauthorizedException("Invalid Access:" + error.status);
     }
   }

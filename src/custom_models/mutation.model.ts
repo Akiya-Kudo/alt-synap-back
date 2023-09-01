@@ -50,13 +50,37 @@ export class upsertArticlePostInput {
     articleContent: ArticleContentInput;
 }
 
+@InputType()
+export class upsertLinkPostInput {
+    @Field( type => ID, { nullable: true })
+    uuid_pid: string;
+
+    @Field()
+    title: string;
+    
+    @Field({ nullable: true })
+    top_link: string;
+    
+    @Field( type => Int )
+    content_type: number;
+    
+    @Field( type => Boolean)
+    publish: boolean;
+}
+
 @ObjectType()
 export class upsertArticlePostOutput {
     @Field( type => Post )
     post: Post
-
+    
     @Field( type => [Tag], { nullable: "items" })
     tags: Tag[]
+}
+
+@ObjectType()
+export class upsertLinkPostOutput {
+    @Field( type => Post )
+    post: Post
 }
 
 @InputType()
