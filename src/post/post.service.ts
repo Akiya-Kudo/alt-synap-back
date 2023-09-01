@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/_prisma/prisma.service';
-import { upsertArticlePostInput } from 'src/custom_models/mutation.model';
+import { upsertArticlePostInput, upsertLinkPostInput } from 'src/custom_models/mutation.model';
 import {v4 as uuid_v4} from 'uuid'
 import { posts, Prisma } from '@prisma/client';
 import { Post } from './post.model';
@@ -30,7 +30,7 @@ export class PostService {
                     console.log("authentication success")
                 }
                 else {
-                    throw new HttpException("authentication faild", HttpStatus.BAD_REQUEST)
+                    throw new HttpException("requesting user is not avalable to get post", HttpStatus.BAD_REQUEST)
                 }
             }
             if (data.deleted) throw new HttpException("post is already deleted", HttpStatus.BAD_REQUEST)
@@ -40,10 +40,7 @@ export class PostService {
                     ...data.users,
                     uid: undefined
                 },
-                article_contents: {
-                    uuid_pid: data.article_contents.uuid_pid,
-                    content:  data.article_contents.content
-                }
+                article_contents: data.article_contents ? data.article_contents : undefined
             })
         } catch (error) {
             throw error
@@ -135,7 +132,7 @@ export class PostService {
                 let pts = [] as {tid: number, uuid_pid: string}[]
                 let tags_newPost = [] as {tid: number, tag_name: string, tag_content_num: number}[]
 
-                if (postData.uuid_pid == null || postData.uuid_pid == undefined) {
+                if (postData.uuid_pid == null || postData.uuid_pid == undefined ) {
                 // create post
                     // get uuid_uid
                     const { uuid_uid } = await prisma.users.findUniqueOrThrow({
@@ -184,7 +181,6 @@ export class PostService {
                             title_lower,
                             top_image,
                             top_link,
-                            content_type,
                             publish,
                             deleted,
                             article_contents: {
@@ -257,47 +253,75 @@ export class PostService {
             return transaction
         } catch ( error ) {
             log(error)
-            throw new HttpException("Faild to Upsert Post", HttpStatus.BAD_REQUEST)
+            throw new HttpException("Faild to Upsert Article Post", HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    async upsertLinkPost (postData: upsertLinkPostInput, uid_token: string) {
+        try {
+            const transaction = await this.prisma.$transaction(async (prisma) => {
+                //separate variables
+                let { uuid_pid, title, top_link, publish, content_type } = postData
+                //set title lower
+                const title_lower = title.toLowerCase()
+                let post = null as posts
+                if (postData.uuid_pid == null || postData.uuid_pid == undefined) {
+                // create post
+                    // get uuid_uid
+                    const { uuid_uid } = await prisma.users.findUniqueOrThrow({
+                        where: { uid: uid_token },
+                        select: { uuid_uid: true }
+                    })
+                    //generate uuid_pid
+                    uuid_pid = uuid_v4()
+                    //create post & article_content
+                    post = await prisma.posts.create({
+                        data: {
+                            uuid_pid,
+                            users: { connect: {uuid_uid: uuid_uid} },
+                            title,
+                            title_lower,
+                            title_tags_search_text: title_lower,
+                            top_link,
+                            content_type,
+                            publish,
+                        }
+                    })
+                    log("created new link post")
+                } else {
+                    // check if the post is exists
+                    const post_before = await prisma.posts.findUniqueOrThrow({
+                        where: { uuid_pid: uuid_pid },
+                        include: { users: { select: {
+                            uid: true,
+                        }}}
+                    })
+                    // check if orner is same to token, for the case incorrect user tend to change other users posts
+                    if (post_before.users.uid !== uid_token ) throw new HttpException("Orner ship is not correct", HttpStatus.FORBIDDEN)
+                    // update post & article_content except for uuid_uid
+                    post = await prisma.posts.update({
+                        where: {
+                            uuid_pid: uuid_pid
+                        },
+                        data: {
+                            title,
+                            title_lower,
+                            top_link,
+                            publish
+                        },
+                    })
+                    log("updated new link post")
+                }
+
+                let res_post = {...post} as Post
+                log(post)
+                return ({post: res_post} )
+            })
+            return transaction
+            //uidからuuid_uidを取得できない場合には
+        } catch ( error ) {
+            log(error)
+            throw new HttpException("Faild to Upsert Link Post", HttpStatus.BAD_REQUEST)
         }
     }
 }
-
-
-//前の生クエリの実装れい
-            // const word_conditions = words.map((word, _i) =>  Prisma.sql` AND p.title_tags_search_text LIKE likequery(${words[_i]}) `)
-
-            // const tag_query = Prisma.sql`SELECT p.uuid_pid 
-            // FROM posts AS p 
-            // LEFT JOIN post_tags AS pt ON p.uuid_pid = pt.uuid_pid 
-            // WHERE pt.tid = ${ selected_tid && selected_tid }
-            // GROUP BY p.uuid_pid
-            // HAVING COUNT(DISTINCT pt.tid) = ${ selected_tid ? 1 : 0 }`
-
-            // const sort_condition = sort_type_num == 0 ? Prisma.sql`ORDER BY p.likes_num DESC` : Prisma.sql`ORDER BY p.timestamp DESC`
-
-            // const execute_sql = 
-            // Prisma.sql`
-            // SELECT
-            //     p.uuid_pid, 
-            //     p.uuid_uid, 
-            //     p.title,
-            //     p.top_link, 
-            //     p.top_image, 
-            //     p.timestamp,
-            //     p.likes_num,
-            //     JSON_AGG(JSON_BUILD_OBJECT( 'tid', t.tid, 'tag_name', t.tag_name, 'display_name', t.display_name, 'tag_image', t.tag_image )) AS tags,
-            //     JSON_BUILD_OBJECT( 'uuid_uid', u.uuid_uid, 'user_name', u.user_name, 'user_image', u.user_image ) AS users,
-            //     COUNT(*) OVER() as total_count
-            // FROM posts AS p
-            // LEFT JOIN post_tags AS pt ON p.uuid_pid = pt.uuid_pid
-            // LEFT JOIN tags AS t ON pt.tid = t.tid
-            // JOIN users AS u ON p.uuid_uid = u.uuid_uid
-            // WHERE p.deleted = FALSE
-            // AND p.publish = TRUE 
-            // ${ words.length > 0 ? Prisma.join(word_conditions, '') : Prisma.sql`` }
-            // ${ selected_tid ? Prisma.sql` AND p.uuid_pid IN (${tag_query}) ` : Prisma.sql`` }
-            // GROUP BY p.uuid_pid, u.uuid_uid, u.user_name, u.user_image
-            // ${ sort_condition } 
-            // LIMIT 20 OFFSET ${ offset } * 20;
-            // ` 
-            // return await this.prisma.$queryRaw(execute_sql, ...words, selected_tid, offset)

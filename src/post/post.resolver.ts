@@ -1,12 +1,13 @@
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PostService } from './post.service';
-import { upsertArticlePostInput, upsertArticlePostOutput } from 'src/custom_models/mutation.model';
+import { upsertArticlePostInput, upsertArticlePostOutput, upsertLinkPostInput, upsertLinkPostOutput } from 'src/custom_models/mutation.model';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { TokenGuard, TokenSecretGuard } from 'src/auth/token.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { TagService } from 'src/tag/tag.service';
 import { PostWithTagsAndUser } from 'src/custom_models/query.model';
 import { Post } from './post.model';
+import { log } from 'console';
 
 @Resolver()
 export class PostResolver {
@@ -41,7 +42,21 @@ export class PostResolver {
             const uid_token = context.req.idTokenUser.user_id
             return await this.postService.upsertArticlePost(postData, uid_token)
         } catch (error) {
-            throw new HttpException("Faild to Upsert Post", HttpStatus.BAD_REQUEST)
+            throw new HttpException("Faild to Upsert Article Post", HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    @Mutation(() => upsertLinkPostOutput, { name: "upsert_link_post"})
+    @UseGuards(TokenGuard)
+    async upsertLinkPost(
+        @Args('postData') postData: upsertLinkPostInput,
+        @Context() context
+    ) {
+        try {
+            const uid_token = context.req.idTokenUser.user_id
+            return await this.postService.upsertLinkPost(postData, uid_token)
+        } catch (error) {
+            throw new HttpException("Faild to Upsert Link Post", HttpStatus.BAD_REQUEST)
         }
     }
 

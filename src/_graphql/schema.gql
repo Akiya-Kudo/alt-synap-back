@@ -78,6 +78,7 @@ type Mutation {
   remove_link_from_collection(cid: Int!, lid: Int!): LinkCollection!
   update_user_info(userData: updateUserInput!): User!
   upsert_article_post(postData: upsertArticlePostInput!): upsertArticlePostOutput!
+  upsert_link_post(postData: upsertLinkPostInput!): upsertLinkPostOutput!
 }
 
 type Post {
@@ -197,4 +198,16 @@ input upsertArticlePostInput {
 type upsertArticlePostOutput {
   post: Post!
   tags: [Tag]!
+}
+
+input upsertLinkPostInput {
+  content_type: Int!
+  publish: Boolean!
+  title: String!
+  top_link: String
+  uuid_pid: ID
+}
+
+type upsertLinkPostOutput {
+  post: Post!
 }
