@@ -44,7 +44,6 @@ export class TokenSecretGuard implements CanActivate {
       request['idTokenUser'] = null
       // log("token guard escaped. no token");
       return true
-      // throw new UnauthorizedException("Invalid Access:" + "401")
     }
     try {
       request['idTokenUser'] = await this.authServise.validateIdToken(idToken);

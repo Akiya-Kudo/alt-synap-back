@@ -11,11 +11,11 @@ export class Like {
   uuid_uid: string;
 
   @Field( type => GraphQLISODateTime, { nullable: true })
-  timestamp: Date;
+  timestamp?: Date;
 
   @Field(type => Post, {nullable: true })
-  posts: Post;
+  posts?: Post;
 
   @Field( type => User, { nullable: true })
-  users: User;
+  users?: User;
 }
