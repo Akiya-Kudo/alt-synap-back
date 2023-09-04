@@ -26,12 +26,8 @@ export class PostService {
             })
 
             if (!data.publish) {
-                if (uid_token == data.users.uid) {
-                    console.log("authentication success")
-                }
-                else {
-                    throw new HttpException("requesting user is not avalable to get post", HttpStatus.BAD_REQUEST)
-                }
+                if (uid_token == data.users.uid) console.log("authentication success")
+                else throw new HttpException("requesting user is not avalable to get post", HttpStatus.BAD_REQUEST)
             }
             if (data.deleted) throw new HttpException("post is already deleted", HttpStatus.BAD_REQUEST)
             return ({
@@ -49,20 +45,32 @@ export class PostService {
 
     async searchPostFromTitleAndTags (
         words: string[], 
-        selected_tid: number,
+        selected_tid: number | null,
         offset: number,
         sort_type_num: number,
+        uid_token: string | null
     ) : Promise<Post[]>{
         try {
-            const words_conditions = words ? words.map( word => ({ title_tags_search_text: { contains: word }}) ) : []
+            let _uuid_uid = undefined
+            if (uid_token) {
+                // get uuid_uid
+                const { uuid_uid } = await this.prisma.users.findUniqueOrThrow({
+                    where: { uid: uid_token },
+                    select: { uuid_uid: true }
+                })
+                _uuid_uid = uuid_uid
+            }
+            const words_conditions = (words && words.length!=0) 
+            ? words.map( word => ({ title_tags_search_text: { contains: word }}) ) 
+            : []
+
             const sort_conditions: Prisma.postsOrderByWithRelationAndSearchRelevanceInput[] =
                 sort_type_num == 0 ? [{ likes_num: "desc" }] : [{ timestamp: "desc" }];
-
             return await this.prisma.posts.findMany({
                 where: {
                     deleted: false,
                     publish: true,
-                    AND: words ? words_conditions : undefined,
+                    AND: words_conditions.length!=0 ? words_conditions : undefined,
                     post_tags: selected_tid ? { some: {tid: selected_tid} } : undefined
                 },
                 select: {
@@ -93,24 +101,31 @@ export class PostService {
                             user_image: true
                         }
                     },
+                    likes: {
+                        where: { uuid_uid: _uuid_uid && _uuid_uid }
+                    }
                 },
                 orderBy: sort_conditions,
                 take: 20,
                 skip: offset
             })
         } catch ( error ) {
+            console.log(error);
+            
             throw new HttpException("Faild to seatch Post", HttpStatus.BAD_REQUEST)
         }
     }
 
-    async countTotalPosts(words: string[], selected_tid: number) : Promise<number>{
-        const words_conditions = words.map( word => ({ title_tags_search_text: { contains: word }}) )
+    async countTotalPosts(words: string[], selected_tid: number | null) : Promise<number>{
+        const words_conditions = (words && words.length!=0) 
+            ? words.map( word => ({ title_tags_search_text: { contains: word }}) ) 
+            : []
         try {
             return this.prisma.posts.count({
                 where: {
                     deleted: false,
                     publish: true,
-                    AND: words ? words_conditions : undefined,
+                    AND: words_conditions.length!=0 ? words_conditions : undefined,
                     post_tags: selected_tid ? { some: {tid: selected_tid} } : undefined
                 }
             })

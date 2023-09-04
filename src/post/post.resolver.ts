@@ -13,8 +13,7 @@ import { log } from 'console';
 export class PostResolver {
     constructor(
         private postService: PostService,
-        private tagService: TagService,
-        private authServise: AuthService) {} //これいる？？消して良い？？
+        private authServise: AuthService) {}
 
     @Query(() => Post, { name: "post" })
     @UseGuards(TokenSecretGuard)
@@ -61,19 +60,24 @@ export class PostResolver {
     }
 
     @Query(() => [Post], { name: "search_post" })
+    @UseGuards(TokenSecretGuard)
     async searchPost(
-        @Args('searchString') searchString: string,
-        @Args('selectedTagId', { type: () => Int, nullable: true }) selectedTagId: number,
+        @Args('searchString', { nullable: true }) searchString: string | null,
+        @Args('selectedTagId', { type: () => Int, nullable: true }) selectedTagId: number | null,
         @Args('offset', {type: () => Int}) offset:number,
-        @Args('sortType', {type: () => Int}) sortType:number
+        @Args('sortType', {type: () => Int}) sortType:number,
+        @Context() context
     ) {
         try {
+            const uid_token: string = context.req.idTokenUser?.user_id 
+
             //引数の整形 : ( 引数のString => lowerケース変換 => 空白で分類配列化 => exclude wordを除外 )
             const excludes = ["a", "and", "the", "are", "is"]
-            const words = searchString.toLowerCase().replace(/　/g, ' ').split(' ').filter( word => word && !excludes.includes(word) )
-
+            const words = searchString 
+            ? searchString.toLowerCase().replace(/　/g, ' ').split(' ').filter( word => word && !excludes.includes(word) )
+            : []
             //posts search from title & selected tags 
-            let res_posts = await this.postService.searchPostFromTitleAndTags(words, selectedTagId, offset, sortType);
+            let res_posts = await this.postService.searchPostFromTitleAndTags(words, selectedTagId, offset, sortType, uid_token);
 
             return res_posts
         } catch (error) {
@@ -85,13 +89,15 @@ export class PostResolver {
 
     @Query(() => Number, { name: "count_total_posts" })
     async countTotalPosts(
-        @Args('searchString') searchString: string,
+        @Args('searchString', { nullable: true }) searchString: string,
         @Args('selectedTagId', { type: () => Int, nullable: true }) selectedTagId: number
     ) {
         try {
             //引数の整形 : ( 引数のString => lowerケース変換 => 空白で分類配列化 => exclude wordを除外 )
             const excludes = ["a", "and", "the", "are", "is"]
-            const words = searchString.toLowerCase().replace(/　/g, ' ').split(' ').filter( word => word && !excludes.includes(word) )
+            const words = searchString 
+            ? searchString.toLowerCase().replace(/　/g, ' ').split(' ').filter( word => word && !excludes.includes(word) )
+            : []
 
             //posts count from title & selected tags 
             return await this.postService.countTotalPosts(words, selectedTagId);

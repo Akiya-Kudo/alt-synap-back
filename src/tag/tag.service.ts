@@ -49,4 +49,16 @@ export class TagService {
         res_tags = res_tags.filter((v, i, a) => a.findIndex(t => (t.tid === v.tid)) === i)
         return res_tags
     }
+
+    async findTag( tid: number ) {
+        try {
+            return await this.prisma.tags.findUniqueOrThrow({
+                where: {
+                    tid: tid
+                }
+            })
+        } catch (error) {
+            throw error
+        }
+    }
 }
