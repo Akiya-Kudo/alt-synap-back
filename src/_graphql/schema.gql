@@ -26,6 +26,13 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Follow {
+  followee_uuid: ID!
+  follower_uuid: ID!
+  users_follows_followee_uuidTousers: [User!]!
+  users_follows_follower_uuidTousers: [User!]!
+}
+
 """
 The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -74,6 +81,7 @@ type Mutation {
   create_user(userData: createUserInput!): User!
   delete_link(lid: Int!): Link!
   delete_link_collection(lid: Int!, uuid_uid: String!): [LinkCollection!]!
+  follow_toggle(followee_uuid: String!): Follow!
   like_toggle(uuid_pid: String!): Like!
   remove_collection(cid: Int!): Collection!
   remove_link_from_collection(cid: Int!, lid: Int!): LinkCollection!
@@ -111,10 +119,13 @@ type PostTag {
 }
 
 type Query {
+  count_posts_made_by_user(selectedTagIds: [Int], uuid_uid: String!): Int!
   count_total_posts(searchString: String, selectedTagId: Int): Float!
   get_link_collections_used(uuid_uid: String!): [LinkCollection!]
   get_link_made_by_user(uuid_uid: String!): [Link!]
+  get_posts_made_by_user(offset: Int!, selectedTagIds: [Int], uuid_uid: String!): [Post!]!
   get_published_links: [Link!]
+  other_user(uuid_uid: String!): User
   post(uuid_pid: String!): Post!
   search_post(offset: Int!, searchString: String, selectedTagId: Int, sortType: Int!): [Post!]!
   search_tag(searchString: String!): [Tag!]!
@@ -149,6 +160,8 @@ type User {
   comment: String
   followee_num: Int
   follower_num: Int
+  follows_follows_followee_uuidTousers: [Follow!]
+  follows_follows_follower_uuidTousers: [Follow!]
   lang_type: Int
   likes: [Like!]
   link_collections: [LinkCollection!]

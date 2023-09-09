@@ -1,5 +1,6 @@
 import { Field, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Collection } from 'src/collection/collection.model';
+import { Follow } from 'src/follow/follow.model';
 import { Like } from 'src/like/like.model';
 import { Link } from 'src/link/link.model';
 import { LinkCollection } from 'src/link_collection/link_collection.model';
@@ -49,4 +50,10 @@ export class User {
 
   @Field( type => [LinkCollection], { nullable: true })
   link_collections?: LinkCollection[];
+
+  @Field( type => [Follow], { nullable: true })
+  follows_follows_followee_uuidTousers?: Follow[]
+
+  @Field( type => [Follow], { nullable: true })
+  follows_follows_follower_uuidTousers?: Follow[]
 }

@@ -21,6 +21,8 @@ export class LikeResolver {
             const uid_token = context.req.idTokenUser.user_id
             return await this.likeService.likeCreateOrDelete(uuid_pid, uid_token)
         } catch (error) {
+            console.log(error);
+            
             throw new HttpException("Faild to like the post", HttpStatus.BAD_REQUEST)
         }
     }

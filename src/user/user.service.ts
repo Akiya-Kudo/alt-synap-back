@@ -17,20 +17,38 @@ export class UserService {
     });
   }
 
-  async users(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.usersWhereUniqueInput;
-    where?: Prisma.usersWhereInput;
-    // orderBy?: Prisma.usersOrderByWithRelationInput;
-  }): Promise<users[]> {
-    const { skip, take, cursor, where } = params;
-    return await this.prisma.users.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-    });
+  async other_user(
+    uuid_uid: string,
+    uid_token: string | null,
+  ): Promise<User> {
+    try {
+      let requesting_user_uuid_uid = undefined
+      if (uid_token) {
+          // get uuid_uid
+          const { uuid_uid } = await this.prisma.users.findUniqueOrThrow({
+              where: { uid: uid_token },
+              select: { uuid_uid: true }
+          })
+          requesting_user_uuid_uid = uuid_uid
+      }
+  
+      return this.prisma.users.findUnique({
+        where: {
+          uuid_uid: uuid_uid
+        },
+        select: {
+          uuid_uid: true,
+          user_name: true,
+          user_image: true,
+          comment: true,
+          follower_num: true,
+          followee_num: true,
+          follows_follows_followee_uuidTousers: {
+            where: { follower_uuid: requesting_user_uuid_uid && requesting_user_uuid_uid }
+          }
+        }
+      });
+    } catch(error) { throw error }
   }
 
   async usersAll() {

@@ -14,6 +14,15 @@ export class PostService {
 
     async findPost ( uuid_pid: string, uid_token: string ): Promise<Post> {
         try {
+            let _uuid_uid = undefined
+            if (uid_token) {
+                // get uuid_uid
+                const { uuid_uid } = await this.prisma.users.findUniqueOrThrow({
+                    where: { uid: uid_token },
+                    select: { uuid_uid: true }
+                })
+                _uuid_uid = uuid_uid
+            }
             const data = await this.prisma.posts.findUnique({
                 where: {
                     uuid_pid: uuid_pid
@@ -21,15 +30,16 @@ export class PostService {
                 include: {
                     users: true,
                     article_contents: true,
-                    post_tags: { include: { tags: true } }
+                    post_tags: { include: { tags: true } },
+                    likes: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : { take: 0 }
                 }
             })
-
+            
+            if (data.deleted) throw new HttpException("post is already deleted", HttpStatus.BAD_REQUEST)
             if (!data.publish) {
                 if (uid_token == data.users.uid) console.log("authentication success")
                 else throw new HttpException("requesting user is not avalable to get post", HttpStatus.BAD_REQUEST)
             }
-            if (data.deleted) throw new HttpException("post is already deleted", HttpStatus.BAD_REQUEST)
             return ({
                 ...data,
                 users: {
@@ -66,6 +76,7 @@ export class PostService {
 
             const sort_conditions: Prisma.postsOrderByWithRelationAndSearchRelevanceInput[] =
                 sort_type_num == 0 ? [{ likes_num: "desc" }] : [{ timestamp: "desc" }];
+
             return await this.prisma.posts.findMany({
                 where: {
                     deleted: false,
@@ -82,6 +93,8 @@ export class PostService {
                     timestamp: true,
                     likes_num: true,
                     content_type: true,
+                    publish: true,
+                    deleted: true,
                     post_tags: {
                         select: {
                             tags: {
@@ -101,9 +114,7 @@ export class PostService {
                             user_image: true
                         }
                     },
-                    likes: {
-                        where: { uuid_uid: _uuid_uid && _uuid_uid }
-                    }
+                    likes: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : { take: 0 }
                 },
                 orderBy: sort_conditions,
                 take: 20,
@@ -127,6 +138,93 @@ export class PostService {
                     publish: true,
                     AND: words_conditions.length!=0 ? words_conditions : undefined,
                     post_tags: selected_tid ? { some: {tid: selected_tid} } : undefined
+                }
+            })
+        } catch ( error ) {
+            throw new HttpException("Faild to count total hit Posts", HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    async findPostsMadeByUser (
+        uuid_uid: string, 
+        selected_tids: number[],
+        offset: number,
+        uid_token: string | null
+    ) : Promise<Post[]>{
+        try {
+            let _uuid_uid = undefined
+            if (uid_token) {
+                // get uuid_uid
+                const { uuid_uid } = await this.prisma.users.findUniqueOrThrow({
+                    where: { uid: uid_token },
+                    select: { uuid_uid: true }
+                })
+                _uuid_uid = uuid_uid
+            }
+            //the case uuid_uid gotten by uid_token is same with the arg's uuid_uid, get posts include unpublished
+            return this.prisma.posts.findMany({
+                where: {
+                    uuid_uid: uuid_uid,
+                    post_tags: selected_tids.length!=0 ? { some: { tid: { in: selected_tids }}} : undefined,
+                    publish: _uuid_uid && _uuid_uid == uuid_uid ? undefined : true,
+                    deleted: false
+                },
+                select: {
+                    uuid_pid: true,
+                    uuid_uid: true,
+                    title: true,
+                    top_link: true,
+                    top_image: true,
+                    timestamp: true,
+                    likes_num: true,
+                    content_type: true,
+                    publish: true,
+                    deleted: true,
+                    post_tags: {
+                        select: {
+                            tags: {
+                                select: {
+                                    tid: true,
+                                    tag_name: true,
+                                    display_name: true,
+                                    tag_image: true
+                                }
+                            }
+                        }
+                    },
+                    likes: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : { take: 0 }
+                },
+                orderBy: { timestamp: "desc" },
+                take: 5,
+                skip: offset
+            })
+        } catch(error) {
+            throw error
+        }
+    }
+
+    async countTotalPostsMadeByUser(
+        uuid_uid: string, 
+        selected_tids: number[],
+        uid_token: string | null
+    ) : Promise<number>{
+        try {
+            let _uuid_uid = undefined
+            if (uid_token) {
+                // get uuid_uid
+                const { uuid_uid } = await this.prisma.users.findUniqueOrThrow({
+                    where: { uid: uid_token },
+                    select: { uuid_uid: true }
+                })
+                _uuid_uid = uuid_uid
+            }
+
+            return this.prisma.posts.count({
+                where: {
+                    uuid_uid: uuid_uid,
+                    post_tags: selected_tids.length!=0 ? { some: { tid: { in: selected_tids }}} : undefined,
+                    publish: _uuid_uid && _uuid_uid == uuid_uid ? undefined : true,
+                    deleted: false
                 }
             })
         } catch ( error ) {

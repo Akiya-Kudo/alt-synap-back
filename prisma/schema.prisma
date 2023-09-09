@@ -52,19 +52,21 @@ model tags {
 }
 
 model users {
-  uid              String             @id @db.VarChar(28)
-  user_name        String?            @db.VarChar(255)
-  user_image       String?            @db.VarChar(2048)
-  comment          String?            @db.VarChar(255)
-  follower_num     Int                @default(0)
-  followee_num     Int                @default(0)
-  lang_type        Int                @default(0) @db.SmallInt
-  uuid_uid         String             @unique(map: "uuid_unique") @db.Uuid
-  collections      collections[]
-  likes            likes[]
-  link_collections link_collections[]
-  links            links[]
-  posts            posts[]
+  uid                                  String             @id @db.VarChar(28)
+  user_name                            String?            @db.VarChar(255)
+  user_image                           String?            @db.VarChar(2048)
+  comment                              String?            @db.VarChar(255)
+  follower_num                         Int                @default(0)
+  followee_num                         Int                @default(0)
+  lang_type                            Int                @default(0) @db.SmallInt
+  uuid_uid                             String             @unique(map: "uuid_unique") @db.Uuid
+  collections                          collections[]
+  follows_follows_followee_uuidTousers follows[]          @relation("follows_followee_uuidTousers")
+  follows_follows_follower_uuidTousers follows[]          @relation("follows_follower_uuidTousers")
+  likes                                likes[]
+  link_collections                     link_collections[]
+  links                                links[]
+  posts                                posts[]
 }
 
 model post_tags {
@@ -132,4 +134,15 @@ model links {
   users            users              @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "users_to_likes_foreign")
 
   @@index([uuid_uid], map: "fki_user_uuid_to_links_foreign")
+}
+
+model follows {
+  follower_uuid                      String @db.Uuid
+  followee_uuid                      String @db.Uuid
+  users_follows_followee_uuidTousers users  @relation("follows_followee_uuidTousers", fields: [followee_uuid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "users_followee_foreign")
+  users_follows_follower_uuidTousers users  @relation("follows_follower_uuidTousers", fields: [follower_uuid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "users_follower_foreign")
+
+  @@id([follower_uuid, followee_uuid], map: "follows_composite_primary")
+  @@index([followee_uuid], map: "idx_followee_uuid")
+  @@index([follower_uuid], map: "idx_follower_uuid")
 }
