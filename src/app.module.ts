@@ -19,6 +19,8 @@ import { CollectionService } from './collection/collection.service';
 import { CollectionResolver } from './collection/collection.resolver';
 import { CollectionModule } from './collection/collection.module';
 import { LinkCollectionModule } from './link_collection/link_collection.module';
+import { FollowService } from './follow/follow.service';
+import { FollowModule } from './follow/follow.module';
 
 @Module({
   imports: [
@@ -38,6 +40,7 @@ import { LinkCollectionModule } from './link_collection/link_collection.module';
     LinkModule,
     CollectionModule,
     LinkCollectionModule,
+    FollowModule,
   ],
   controllers: [AppController],
   providers: [AppService],

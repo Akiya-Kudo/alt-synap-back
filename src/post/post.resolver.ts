@@ -8,6 +8,7 @@ import { TagService } from 'src/tag/tag.service';
 import { PostWithTagsAndUser } from 'src/custom_models/query.model';
 import { Post } from './post.model';
 import { log } from 'console';
+import e from 'express';
 
 @Resolver()
 export class PostResolver {
@@ -69,8 +70,7 @@ export class PostResolver {
         @Context() context
     ) {
         try {
-            const uid_token: string = context.req.idTokenUser?.user_id 
-
+            const uid_token: string | null = context.req.idTokenUser?.user_id 
             //引数の整形 : ( 引数のString => lowerケース変換 => 空白で分類配列化 => exclude wordを除外 )
             const excludes = ["a", "and", "the", "are", "is"]
             const words = searchString 
@@ -107,4 +107,41 @@ export class PostResolver {
             
         }
     }
-}
+
+    @Query(() => [Post], { name: "get_posts_made_by_user" })
+    @UseGuards(TokenSecretGuard)
+    async getPostsMadeByUser (
+        @Args('uuid_uid', { type: () => String }) uuid_uid: string,
+        @Args('selectedTagIds', { type: () => [Int], nullable: 'itemsAndList' }) selectedTagIds: number[] | null,
+        @Args('offset', { type: () => Int }) offset: number,
+        @Context() context
+    ) {
+        try {
+            const uid_token: string | null = context.req.idTokenUser?.user_id
+
+            const selectedTids = selectedTagIds ? selectedTagIds : []
+            return await this.postService.findPostsMadeByUser(uuid_uid, selectedTids, offset, uid_token)
+        } catch (error) {
+            console.error(error);
+            throw new HttpException("Faild to get Post made by user", HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    @Query(() => Int, { name: "count_posts_made_by_user" })
+    @UseGuards(TokenSecretGuard)
+    async countPostsMadeByUser (
+        @Args('uuid_uid', { type: () => String }) uuid_uid: string,
+        @Args('selectedTagIds', { type: () => [Int], nullable: 'itemsAndList' }) selectedTagIds: number[] | null,
+        @Context() context
+    ) {
+        try {
+            const uid_token: string | null = context.req.idTokenUser?.user_id
+
+            const selectedTids = selectedTagIds ? selectedTagIds : []
+            return await this.postService.countTotalPostsMadeByUser(uuid_uid, selectedTids, uid_token)
+        } catch (error) {
+            console.error(error);
+            throw new HttpException("Faild to count Post made by user", HttpStatus.BAD_REQUEST)
+        }
+    }
+} 
