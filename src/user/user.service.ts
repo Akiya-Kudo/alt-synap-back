@@ -43,9 +43,7 @@ export class UserService {
           comment: true,
           follower_num: true,
           followee_num: true,
-          follows_follows_followee_uuidTousers: {
-            where: { follower_uuid: requesting_user_uuid_uid && requesting_user_uuid_uid }
-          }
+          follows_follows_followee_uuidTousers: requesting_user_uuid_uid ? { where: { follower_uuid: requesting_user_uuid_uid } } : { take: 0 }
         }
       });
     } catch(error) { throw error }
@@ -56,7 +54,6 @@ export class UserService {
   }
 
   async createUser(data: Prisma.usersCreateInput): Promise<users> {
-    console.log(data)
     return this.prisma.users.create({ data });
   }
 

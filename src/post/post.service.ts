@@ -117,7 +117,7 @@ export class PostService {
                     likes: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : { take: 0 }
                 },
                 orderBy: sort_conditions,
-                take: 20,
+                take: 5,
                 skip: offset
             })
         } catch ( error ) {

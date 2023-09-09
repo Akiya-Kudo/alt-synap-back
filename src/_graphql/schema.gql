@@ -29,8 +29,8 @@ scalar DateTime
 type Follow {
   followee_uuid: ID!
   follower_uuid: ID!
-  users_follows_followee_uuidTousers: [User!]!
-  users_follows_follower_uuidTousers: [User!]!
+  users_follows_followee_uuidTousers: User
+  users_follows_follower_uuidTousers: User
 }
 
 """
@@ -121,6 +121,7 @@ type PostTag {
 type Query {
   count_posts_made_by_user(selectedTagIds: [Int], uuid_uid: String!): Int!
   count_total_posts(searchString: String, selectedTagId: Int): Float!
+  get_follow_list(is_follower_list: Boolean!, offset: Int!, uuid_uid: String!): [Follow!]!
   get_link_collections_used(uuid_uid: String!): [LinkCollection!]
   get_link_made_by_user(uuid_uid: String!): [Link!]
   get_posts_made_by_user(offset: Int!, selectedTagIds: [Int], uuid_uid: String!): [Post!]!
