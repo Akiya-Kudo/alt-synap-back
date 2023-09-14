@@ -9,8 +9,7 @@ import { Post } from 'src/post/post.model';
 @Resolver()
 export class LikeResolver {
     constructor(
-        private likeService: LikeService,
-        private authServise: AuthService) {}
+        private likeService: LikeService) {}
 
     @Mutation(() => Like, { name: "like_toggle"})
     @UseGuards(TokenGuard)
@@ -25,24 +24,6 @@ export class LikeResolver {
             console.log(error);
             
             throw new HttpException("Faild to like the post", HttpStatus.BAD_REQUEST)
-        }
-    }
-
-    @Query(() => [Post],{ name: "get_likes_with_post" })
-    @UseGuards(TokenGuard)
-    async getLikesWithPost (
-        @Args('selectedTagIds', { type: () => [Int], nullable: 'itemsAndList' }) selectedTagIds: number[] | null,
-        @Args('offset', { type: () => Int }) offset: number,
-        @Context() context
-    ) {
-        try {
-            const uid_token: string | null = context.req.idTokenUser?.user_id
-
-            const selectedTids = selectedTagIds ? selectedTagIds : []
-            return await this.likeService.getUserLikesWithPost(selectedTids, offset, uid_token)
-        } catch (error) {
-            console.error(error);
-            throw new HttpException("Faild to get Post liked by user", HttpStatus.BAD_REQUEST)
         }
     }
 }
