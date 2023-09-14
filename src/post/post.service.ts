@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/_prisma/prisma.service';
 import { upsertArticlePostInput, upsertLinkPostInput } from 'src/custom_models/mutation.model';
 import {v4 as uuid_v4} from 'uuid'
@@ -192,15 +192,20 @@ export class PostService {
                             }
                         }
                     },
+                    users: {
+                        select: {
+                            uuid_uid: true,
+                            user_name: true,
+                            user_image: true
+                        }
+                    },
                     likes: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : { take: 0 }
                 },
                 orderBy: { timestamp: "desc" },
                 take: 5,
                 skip: offset
             })
-        } catch(error) {
-            throw error
-        }
+        } catch(error) {throw error}
     }
 
     async countTotalPostsMadeByUser(
@@ -227,9 +232,7 @@ export class PostService {
                     deleted: false
                 }
             })
-        } catch ( error ) {
-            throw new HttpException("Faild to count total hit Posts", HttpStatus.BAD_REQUEST)
-        }
+        } catch ( error ) {throw error}
     }
 
     async upsertArticlePost(postData: upsertArticlePostInput, uid_token: string) {
