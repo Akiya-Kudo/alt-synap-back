@@ -7,16 +7,16 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER posts_set_timestamp
-BEFORE INSERT OR UPDATE ON posts
+BEFORE INSERT  ON posts
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
 
 CREATE TRIGGER likes_set_timestamp
-BEFORE INSERT OR UPDATE ON likes
+BEFORE INSERT ON likes
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
 
 CREATE TRIGGER post_tags_set_timestamp
-BEFORE INSERT OR UPDATE ON post_tags
+BEFORE INSERT ON post_tags
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
