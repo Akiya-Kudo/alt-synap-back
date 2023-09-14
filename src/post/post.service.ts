@@ -235,6 +235,82 @@ export class PostService {
         } catch ( error ) {throw error}
     }
 
+    async getPostUserLiked(
+        selected_tids: number[],
+        offset: number,
+        uid_token: string | null,
+    ) {
+        try {
+            // get uuid_uid
+            const { uuid_uid } = await this.prisma.users.findUniqueOrThrow({
+                where: { uid: uid_token },
+                select: { uuid_uid: true }
+            })
+            if (!uuid_uid) throw new NotFoundException( {message: "can't identify user"}, "authorization error")
+            return await this.prisma.likes.findMany({
+                where: {
+                    uuid_uid: uuid_uid,
+                    posts: {
+                        deleted: false,
+                        post_tags: selected_tids.length!=0 ? { some: { tid: { in: selected_tids }}} : undefined
+                    }
+                },
+                select: {
+                    posts: {
+                        include: {
+                            post_tags: {
+                                select: {
+                                    tags: {
+                                        select: {
+                                            tid: true,
+                                            tag_name: true,
+                                            display_name: true,
+                                            tag_image: true
+                                        }
+                                    }
+                                }
+                            },
+                            users: {
+                                select: {
+                                    uuid_uid: true,
+                                    user_name: true,
+                                    user_image: true
+                                }
+                            }
+                        }
+                    }
+                },
+                orderBy: { timestamp: "desc" },
+                take: 5,
+                skip: offset
+            })
+            .then(likes => likes.map(like => like.posts))
+
+        } catch (error) {throw error}
+    }
+
+    async countTotalPostsUserLiked(
+        selected_tids: number[],
+        uid_token: string | null
+    ) : Promise<number>{
+        try {
+            const { uuid_uid } = await this.prisma.users.findUniqueOrThrow({
+                where: { uid: uid_token },
+                select: { uuid_uid: true }
+            })
+
+            return this.prisma.likes.count({
+                where: {
+                    uuid_uid: uuid_uid,
+                    posts: {
+                        deleted: false,
+                        post_tags: selected_tids.length!=0 ? { some: { tid: { in: selected_tids }}} : undefined
+                    }
+                }
+            })
+        } catch ( error ) {throw error}
+    }
+
     async upsertArticlePost(postData: upsertArticlePostInput, uid_token: string) {
         try {
             const transaction = await this.prisma.$transaction(async (prisma) => {

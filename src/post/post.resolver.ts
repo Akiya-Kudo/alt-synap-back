@@ -144,4 +144,40 @@ export class PostResolver {
             throw new HttpException("Faild to count Post made by user", HttpStatus.BAD_REQUEST)
         }
     }
+
+
+    @Query(() => [Post],{ name: "get_posts_user_liked" })
+    @UseGuards(TokenGuard)
+    async getPostUserLiked (
+        @Args('selectedTagIds', { type: () => [Int], nullable: 'itemsAndList' }) selectedTagIds: number[] | null,
+        @Args('offset', { type: () => Int }) offset: number,
+        @Context() context
+    ) {
+        try {
+            const uid_token: string | null = context.req.idTokenUser?.user_id
+
+            const selectedTids = selectedTagIds ? selectedTagIds : []
+            return await this.postService.getPostUserLiked(selectedTids, offset, uid_token)
+        } catch (error) {
+            console.error(error);
+            throw new HttpException("Faild to get Post liked by user", HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    @Query(() => Int, { name: "count_posts_user_liked" })
+    @UseGuards(TokenGuard)
+    async countPostUserLiked (
+        @Args('selectedTagIds', { type: () => [Int], nullable: 'itemsAndList' }) selectedTagIds: number[] | null,
+        @Context() context
+    ) {
+        try {
+            const uid_token: string | null = context.req.idTokenUser?.user_id
+
+            const selectedTids = selectedTagIds ? selectedTagIds : []
+            return await this.postService.countTotalPostsUserLiked(selectedTids, uid_token)
+        } catch (error) {
+            console.error(error)
+            throw new HttpException("Faild to count Post user liked", HttpStatus.BAD_REQUEST)
+        }
+    }
 } 

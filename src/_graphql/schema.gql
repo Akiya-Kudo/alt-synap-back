@@ -120,12 +120,13 @@ type PostTag {
 
 type Query {
   count_posts_made_by_user(selectedTagIds: [Int], uuid_uid: String!): Int!
+  count_posts_user_liked(selectedTagIds: [Int]): Int!
   count_total_posts(searchString: String, selectedTagId: Int): Float!
   get_follow_list(is_follower_list: Boolean!, offset: Int!, uuid_uid: String!): [Follow!]!
-  get_likes_with_post(offset: Int!, selectedTagIds: [Int]): [Post!]!
   get_link_collections_used(uuid_uid: String!): [LinkCollection!]
   get_link_made_by_user(uuid_uid: String!): [Link!]
   get_posts_made_by_user(offset: Int!, selectedTagIds: [Int], uuid_uid: String!): [Post!]!
+  get_posts_user_liked(offset: Int!, selectedTagIds: [Int]): [Post!]!
   get_published_links: [Link!]
   other_user(uuid_uid: String!): User
   post(uuid_pid: String!): Post!
