@@ -170,6 +170,7 @@ type User {
   link_collections: [LinkCollection!]
   links: [Link!]
   posts: [Post!]
+  top_collection: Int
   uid: ID
   user_image: String
   user_name: String

@@ -13,14 +13,13 @@ import { PostsTagModule } from './posts_tag/posts_tag.module';
 import { LikeModule } from './like/like.module';
 import { ArticleContentModule } from './article_content/article_content.module';
 import { AuthModule } from './auth/auth.module';
-import { LinkService } from './link/link.service';
 import { LinkModule } from './link/link.module';
-import { CollectionService } from './collection/collection.service';
-import { CollectionResolver } from './collection/collection.resolver';
 import { CollectionModule } from './collection/collection.module';
 import { LinkCollectionModule } from './link_collection/link_collection.module';
-import { FollowService } from './follow/follow.service';
 import { FollowModule } from './follow/follow.module';
+import { FolderModule } from './folder/folder.module';
+import { FolderPostModule } from './folder_post/folder_post.module';
+import { UserTagModule } from './user_tag/user_tag.module';
 
 @Module({
   imports: [
@@ -41,6 +40,9 @@ import { FollowModule } from './follow/follow.module';
     CollectionModule,
     LinkCollectionModule,
     FollowModule,
+    FolderModule,
+    FolderPostModule,
+    UserTagModule,
   ],
   controllers: [AppController],
   providers: [AppService],
