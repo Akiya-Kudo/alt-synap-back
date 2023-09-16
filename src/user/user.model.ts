@@ -35,6 +35,9 @@ export class User {
   @Field( type => Int, { nullable: true })
   lang_type?: number;
 
+  @Field( type => Int, {nullable: true})
+  top_collection?: number;
+
 
   @Field( type => [Post], { nullable: true })
   posts?: Post[];

@@ -276,7 +276,8 @@ export class PostService {
                                     user_name: true,
                                     user_image: true
                                 }
-                            }
+                            },
+                            likes: { where: { uuid_uid: uuid_uid }}
                         }
                     }
                 },

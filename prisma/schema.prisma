@@ -32,6 +32,7 @@ model posts {
   uuid_pid               String            @id(map: "posts_primary") @unique(map: "uuid_pid_unique") @db.Uuid
   uuid_uid               String            @db.Uuid
   article_contents       article_contents?
+  folder_posts           folder_posts[]
   likes                  likes[]
   post_tags              post_tags[]
   users                  users             @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "user_uuid_to_posts_foreign")
@@ -49,6 +50,7 @@ model tags {
   tag_image       String?     @db.VarChar(2048)
   tag_content_num Int         @default(0)
   post_tags       post_tags[]
+  user_tags       user_tags[]
 }
 
 model users {
@@ -60,13 +62,16 @@ model users {
   followee_num                         Int                @default(0)
   lang_type                            Int                @default(0) @db.SmallInt
   uuid_uid                             String             @unique(map: "uuid_unique") @db.Uuid
+  top_collection                       Int?
   collections                          collections[]
+  folders                              folders[]
   follows_follows_followee_uuidTousers follows[]          @relation("follows_followee_uuidTousers")
   follows_follows_follower_uuidTousers follows[]          @relation("follows_follower_uuidTousers")
   likes                                likes[]
   link_collections                     link_collections[]
   links                                links[]
   posts                                posts[]
+  user_tags                            user_tags[]
 }
 
 model post_tags {
@@ -145,4 +150,34 @@ model follows {
   @@id([follower_uuid, followee_uuid], map: "follows_composite_primary")
   @@index([followee_uuid], map: "idx_followee_uuid")
   @@index([follower_uuid], map: "idx_follower_uuid")
+}
+
+model folder_posts {
+  fid       BigInt
+  uuid_pid  String    @db.Uuid
+  timestamp DateTime? @db.Timestamptz(6)
+  folders   folders   @relation(fields: [fid], references: [fid], onDelete: NoAction, onUpdate: NoAction, map: "fid_foreign_key")
+  posts     posts     @relation(fields: [uuid_pid], references: [uuid_pid], onDelete: NoAction, onUpdate: NoAction, map: "uuid_pid_foreign_key")
+
+  @@id([fid, uuid_pid], map: "folder_posts_pkey_conbined")
+}
+
+model folders {
+  fid          BigInt         @id
+  uuid_uid     String         @db.Uuid
+  title        String         @db.VarChar(100)
+  top_image    String?        @db.VarChar
+  timestamp    DateTime?      @db.Timestamptz(6)
+  folder_posts folder_posts[]
+  users        users          @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "uuid_uid_foreign_folders_from_users")
+}
+
+model user_tags {
+  uuid_uid  String    @db.Uuid
+  tid       Int
+  timestamp DateTime? @db.Timestamptz(6)
+  tags      tags      @relation(fields: [tid], references: [tid], onDelete: NoAction, onUpdate: NoAction, map: "tid_foreign_key")
+  users     users     @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "uuid_uid_foreign_key")
+
+  @@id([uuid_uid, tid], map: "pkey_user_tags_conbined")
 }
