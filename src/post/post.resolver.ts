@@ -114,13 +114,14 @@ export class PostResolver {
         @Args('uuid_uid', { type: () => String }) uuid_uid: string,
         @Args('selectedTagIds', { type: () => [Int], nullable: 'itemsAndList' }) selectedTagIds: number[] | null,
         @Args('offset', { type: () => Int }) offset: number,
+        @Args('no_pagenation', { type: () => Boolean }) no_pagenation: boolean,
         @Context() context
     ) {
         try {
             const uid_token: string | null = context.req.idTokenUser?.user_id
 
             const selectedTids = selectedTagIds ? selectedTagIds : []
-            return await this.postService.findPostsMadeByUser(uuid_uid, selectedTids, offset, uid_token)
+            return await this.postService.findPostsMadeByUser(uuid_uid, selectedTids, offset, no_pagenation, uid_token)
         } catch (error) {
             console.error(error);
             throw new HttpException("Faild to get Post made by user", HttpStatus.BAD_REQUEST)

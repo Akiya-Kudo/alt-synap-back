@@ -1,9 +1,7 @@
 import { Field, ID, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { GraphQLJSONObject } from "graphql-scalars";
-import { ArticleContent } from "src/article_content/article_content.model";
 import { Post } from "src/post/post.model";
 import { Tag } from "src/tag/tag.model";
-import { User } from "src/user/user.model";
 
 @InputType()
 class TagInput {
@@ -138,4 +136,17 @@ export class createLinkInput {
     
     @Field( type => Boolean)
     is_path_search: boolean;
+}
+
+
+@InputType()
+export class upsertFolderInput {
+    @Field( type => Int, { nullable: true })
+    fid: number | null;
+
+    @Field({ nullable: true })
+    title?: string;
+
+    @Field({ nullable: true })
+    top_image?: string;
 }

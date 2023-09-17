@@ -153,7 +153,7 @@ model follows {
 }
 
 model folder_posts {
-  fid       BigInt
+  fid       Int
   uuid_pid  String    @db.Uuid
   timestamp DateTime? @db.Timestamptz(6)
   folders   folders   @relation(fields: [fid], references: [fid], onDelete: NoAction, onUpdate: NoAction, map: "fid_foreign_key")
@@ -163,9 +163,9 @@ model folder_posts {
 }
 
 model folders {
-  fid          BigInt         @id
-  uuid_uid     String         @db.Uuid
+  fid          Int            @id @default(autoincrement())
   title        String         @db.VarChar(100)
+  uuid_uid     String         @db.Uuid
   top_image    String?        @db.VarChar
   timestamp    DateTime?      @db.Timestamptz(6)
   folder_posts folder_posts[]

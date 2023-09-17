@@ -149,6 +149,7 @@ export class PostService {
         uuid_uid: string, 
         selected_tids: number[],
         offset: number,
+        no_pagenation: boolean,
         uid_token: string | null
     ) : Promise<Post[]>{
         try {
@@ -202,8 +203,8 @@ export class PostService {
                     likes: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : { take: 0 }
                 },
                 orderBy: { timestamp: "desc" },
-                take: 5,
-                skip: offset
+                take: !no_pagenation ? 5 : undefined,
+                skip: !no_pagenation ? offset : undefined
             })
         } catch(error) {throw error}
     }

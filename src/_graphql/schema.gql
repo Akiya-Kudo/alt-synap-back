@@ -26,6 +26,24 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Folder {
+  fid: Int!
+  folder_posts: [FolderPost!]
+  timestamp: DateTime
+  title: String
+  top_image: String
+  users: User
+  uuid_uid: String
+}
+
+type FolderPost {
+  fid: Int!
+  folders: Folder
+  posts: Post
+  timestamp: DateTime
+  uuid_pid: String!
+}
+
 type Follow {
   followee_uuid: ID!
   follower_uuid: ID!
@@ -76,17 +94,21 @@ type LinkCollection {
 
 type Mutation {
   add_link_to_collection(cid: Int!, lid: Int!, uuid_uid: String!): LinkCollection!
+  add_posts_to_folder(fid: Int!, uuid_pids: [String!]!): [FolderPost!]!
   create_collection(collection_name: String!, uuid_uid: String!): Collection!
   create_link(linkData: createLinkInput!): Link!
   create_user(userData: createUserInput!): User!
+  delete_folder(fid: Int!): Folder!
   delete_link(lid: Int!): Link!
   delete_link_collection(lid: Int!, uuid_uid: String!): [LinkCollection!]!
+  delete_posts_from_folder(fid: Int!, uuid_pids: [String!]!): Int!
   follow_toggle(followee_uuid: String!): Follow!
   like_toggle(uuid_pid: String!): Like!
   remove_collection(cid: Int!): Collection!
   remove_link_from_collection(cid: Int!, lid: Int!): LinkCollection!
   update_user_info(userData: updateUserInput!): User!
   upsert_article_post(postData: upsertArticlePostInput!): upsertArticlePostOutput!
+  upsert_folder(folderData: upsertFolderInput!): Folder!
   upsert_link_post(postData: upsertLinkPostInput!): upsertLinkPostOutput!
 }
 
@@ -125,7 +147,7 @@ type Query {
   get_follow_list(is_follower_list: Boolean!, offset: Int!, uuid_uid: String!): [Follow!]!
   get_link_collections_used(uuid_uid: String!): [LinkCollection!]
   get_link_made_by_user(uuid_uid: String!): [Link!]
-  get_posts_made_by_user(offset: Int!, selectedTagIds: [Int], uuid_uid: String!): [Post!]!
+  get_posts_made_by_user(no_pagenation: Boolean!, offset: Int!, selectedTagIds: [Int], uuid_uid: String!): [Post!]!
   get_posts_user_liked(offset: Int!, selectedTagIds: [Int]): [Post!]!
   get_published_links: [Link!]
   other_user(uuid_uid: String!): User
@@ -217,6 +239,12 @@ input upsertArticlePostInput {
 type upsertArticlePostOutput {
   post: Post!
   tags: [Tag]!
+}
+
+input upsertFolderInput {
+  fid: Int
+  title: String
+  top_image: String
 }
 
 input upsertLinkPostInput {
