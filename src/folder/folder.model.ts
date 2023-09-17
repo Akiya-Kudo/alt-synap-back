@@ -1,13 +1,10 @@
 import { Field, GraphQLISODateTime, ID, InputType, Int, ObjectType, PartialType } from '@nestjs/graphql';
-import { GraphQLJSONObject } from 'graphql-scalars';
 import { FolderPost } from 'src/folder_post/folder_post.model';
-import { LinkCollection } from 'src/link_collection/link_collection.model';
-import { Post } from 'src/post/post.model';
 import { User } from 'src/user/user.model';
 
 @ObjectType()
 export class Folder {
-    @Field( type => Int )
+    @Field( type => Int)
     fid: number;
 
     @Field({ nullable: true })

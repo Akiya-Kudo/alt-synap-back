@@ -3,7 +3,7 @@ ALTER TABLE "users" ADD COLUMN     "top_collection" INTEGER;
 
 -- CreateTable
 CREATE TABLE "folder_posts" (
-    "fid" BIGINT NOT NULL,
+    "fid" INTEGER NOT NULL,
     "uuid_pid" UUID NOT NULL,
     "timestamp" TIMESTAMPTZ(6),
 
@@ -12,7 +12,7 @@ CREATE TABLE "folder_posts" (
 
 -- CreateTable
 CREATE TABLE "folders" (
-    "fid" BIGINT NOT NULL,
+    "fid" SERIAL NOT NULL,
     "uuid_uid" UUID NOT NULL,
     "title" VARCHAR(100) NOT NULL,
     "top_image" VARCHAR,
