@@ -116,6 +116,7 @@ type Post {
   article_contents: ArticleContent
   content_type: Int
   deleted: Boolean
+  folder_posts: [FolderPost!]
   likes: [Like!]
   likes_num: Int
   post_tags: [PostTag!]
@@ -173,6 +174,7 @@ type Tag {
   tag_image: String
   tag_name: String
   tid: Int
+  user_tags: [UserTag!]
 }
 
 input TagInput {
@@ -183,6 +185,7 @@ input TagInput {
 type User {
   collections: [Collection!]
   comment: String
+  folders: [Folder!]
   followee_num: Int
   follower_num: Int
   follows_follows_followee_uuidTousers: [Follow!]
@@ -196,7 +199,16 @@ type User {
   uid: ID
   user_image: String
   user_name: String
+  user_tags: [UserTag!]
   uuid_uid: ID
+}
+
+type UserTag {
+  tags: Tag
+  tid: Int
+  timestamp: DateTime
+  users: User
+  uuid_uid: String
 }
 
 input createLinkInput {

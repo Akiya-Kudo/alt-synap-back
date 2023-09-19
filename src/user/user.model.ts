@@ -1,10 +1,12 @@
 import { Field, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Collection } from 'src/collection/collection.model';
+import { Folder } from 'src/folder/folder.model';
 import { Follow } from 'src/follow/follow.model';
 import { Like } from 'src/like/like.model';
 import { Link } from 'src/link/link.model';
 import { LinkCollection } from 'src/link_collection/link_collection.model';
 import { Post } from 'src/post/post.model';
+import { UserTag } from 'src/user_tag/user_tag.model';
 
 // modelでのnullableは一括してID以外にオプションとしてつけています。処理を記述していき、不具合が主じたらその度変更していきます。
 // リレーションを親に子のオブジェクトの配列を持たせることで表示させます。
@@ -59,4 +61,10 @@ export class User {
 
   @Field( type => [Follow], { nullable: true })
   follows_follows_follower_uuidTousers?: Follow[]
+
+  @Field(type => [Folder], { nullable: true })
+  folders?: Folder[]
+
+  @Field(type => [UserTag], {nullable: true})
+  user_tags?: UserTag[];
 }

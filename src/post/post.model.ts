@@ -1,5 +1,6 @@
 import { Field, GraphQLISODateTime, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { ArticleContent } from 'src/article_content/article_content.model';
+import { FolderPost } from 'src/folder_post/folder_post.model';
 import { Like } from 'src/like/like.model';
 import { PostTag } from 'src/posts_tag/posts_tag.model';
 import { SourceContent } from 'src/source_content/source_content.model';
@@ -59,4 +60,7 @@ export class Post {
 
   @Field( type => [Like], { nullable: true })
   likes?: Like[];
+
+  @Field(type => [FolderPost], {nullable: true})
+  folder_posts?: FolderPost[];
 }

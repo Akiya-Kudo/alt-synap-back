@@ -1,6 +1,7 @@
 import { Field, ID, InputType, Int, ObjectType, PartialType } from '@nestjs/graphql';
 import { Post } from 'src/post/post.model';
 import { PostTag } from 'src/posts_tag/posts_tag.model';
+import { UserTag } from 'src/user_tag/user_tag.model';
 
 @ObjectType()
 export class Tag {
@@ -21,4 +22,7 @@ export class Tag {
 
   @Field( type => [PostTag], { nullable: true })
   post_tags?: PostTag[];
+
+  @Field(type => [UserTag], {nullable: true})
+  user_tags?: UserTag[]
 }

@@ -9,11 +9,36 @@ import { log } from 'console';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async user(
-    userWhereUniqueInput: Prisma.usersWhereUniqueInput,
-  ): Promise<users> {
-    return this.prisma.users.findUnique({
-      where: userWhereUniqueInput,
+  async user(uid: string) {
+    return this.prisma.users.findUniqueOrThrow({
+      where: {uid: uid},
+      select: {
+        uuid_uid: true,
+        user_name: true,
+        user_image: true,
+        comment: true,
+        followee_num: true,
+        follower_num: true,
+        lang_type: true,
+        top_collection: true,
+
+        collections: {
+          where: {deleted: false},
+          include: {
+
+            link_collections: {
+              where: {deleted: false},
+              include: {
+
+                links: true
+              }
+            }
+          }
+        },
+        folders: {
+          orderBy: { timestamp: "desc" }
+        }
+      }
     });
   }
 
