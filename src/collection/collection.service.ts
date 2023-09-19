@@ -6,38 +6,37 @@ import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class CollectionService {
     constructor(private prisma: PrismaService) {}
-
-    async userCollections(uuid_uid: string) : Promise<Collection[]>{
-        try {
-            const user_collections = await this.prisma.collections.findMany({
-                where: {
-                    uuid_uid: uuid_uid,
-                    deleted: false,
-                },
-                select: {
-                    cid: true,
-                    collection_name: true,
-                    uuid_uid: true,
-                    deleted: true,
-                    link_collections: {
-                        where: {
-                            deleted: false,
-                        },
-                        select: { 
-                            lid: true,
-                            cid: true,
-                            uuid_uid: true,
-                            deleted: true,
-                            links: true ,
-                        }
-                    }
-                }
-            })
-            return user_collections
-        } catch ( error ) {
-            throw new HttpException("Faild to count total hit Posts", HttpStatus.BAD_REQUEST)
-        }
-    }
+    // async userCollections(uuid_uid: string) : Promise<Collection[]>{
+    //     try {
+    //         const user_collections = await this.prisma.collections.findMany({
+    //             where: {
+    //                 uuid_uid: uuid_uid,
+    //                 deleted: false,
+    //             },
+    //             select: {
+    //                 cid: true,
+    //                 collection_name: true,
+    //                 uuid_uid: true,
+    //                 deleted: true,
+    //                 link_collections: {
+    //                     where: {
+    //                         deleted: false,
+    //                     },
+    //                     select: { 
+    //                         lid: true,
+    //                         cid: true,
+    //                         uuid_uid: true,
+    //                         deleted: true,
+    //                         links: true ,
+    //                     }
+    //                 }
+    //             }
+    //         })
+    //         return user_collections
+    //     } catch ( error ) {
+    //         throw new HttpException("Faild to count total hit Posts", HttpStatus.BAD_REQUEST)
+    //     }
+    // }
 
     async updateCollectionToDeleted(cid: number): Promise<Collection> {
         return await this.prisma.collections.update({

@@ -5,6 +5,7 @@ import { createUserInput, updateUserInput } from 'src/custom_models/mutation.mod
 import { CollectionService } from 'src/collection/collection.service';
 import { TokenGuard, TokenSecretGuard } from 'src/auth/token.guard';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { log } from 'console';
 
 @Resolver()
 export class UserResolver {
@@ -18,13 +19,12 @@ export class UserResolver {
     @Args('uid') 
     uid: string
   ) {
-    const login_user: User = await this.userService.user({ uid });
-    if (login_user) {
-      const collections = await this.collectionService.userCollections(login_user.uuid_uid)
-      login_user.collections = collections
+    try {
+      return await this.userService.user( uid );
+    } catch (error) {
+      log(error)
+      throw new HttpException("Faild to get user infomation", HttpStatus.BAD_REQUEST)
     }
-    
-    return login_user
   }
 
   @Query(() => User, { name: 'other_user', nullable: true })

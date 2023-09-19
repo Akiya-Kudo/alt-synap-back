@@ -22,31 +22,4 @@ type profType = {
 @Controller()
 export class AppController {
   constructor(private readonly userService: UserService) {}
-
-  @Post('user')
-  async signupUser(
-    @Body() userData: createUserInput,
-  ): Promise<UserModel> {
-    return this.userService.createUser(userData);
-  }
-
-  @Get('user/:firebase_id')
-  async getUser(@Param('uid') uid: string): Promise<users> {
-    return this.userService.user({
-      uid: uid,
-    });
-  }
-  @Get('usersAll')
-  async getUsers(): Promise<any> {
-    return this.userService.usersAll();
-  }
-
-  @Delete('user/:uid')
-  async deleteUser(
-    @Param('uid') uid: string,
-  ): Promise<{ uid?: string }> {
-    return this.userService.deleteUser({
-      uid: uid,
-    });
-  }
 }
