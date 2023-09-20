@@ -27,7 +27,7 @@ export class LinkCollectionService {
                 }
             })
         } catch ( error ) {
-            throw new HttpException("Faild to get link collections from db", HttpStatus.BAD_REQUEST)
+            throw error
         }
     }
 
@@ -72,18 +72,6 @@ export class LinkCollectionService {
     }
 
     async deleteLinkCollection(lid: number, uuid_uid: string) {
-        // return this.prisma.link_collections.delete({
-        //     where: {
-        //         // lid_cid: {
-        //         //     lid: lid,
-        //         //     cid: cid
-        //         // },
-        //         lid_cid: {
-        //             lid: lid
-        //         }
-        //     }
-        //     全てのuserのlidが該当するli_colを削除する必要があります
-        // })
         try {
             const userLinkCollections_select_by_lid = await this.prisma.link_collections.findMany({
                 where: {
