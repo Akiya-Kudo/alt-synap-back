@@ -64,6 +64,7 @@ model users {
   uuid_uid                             String             @unique(map: "uuid_unique") @db.Uuid
   top_collection                       Int?
   collections                          collections[]
+  folder_posts                         folder_posts[]
   folders                              folders[]
   follows_follows_followee_uuidTousers follows[]          @relation("follows_followee_uuidTousers")
   follows_follows_follower_uuidTousers follows[]          @relation("follows_follower_uuidTousers")
@@ -156,16 +157,18 @@ model folder_posts {
   fid       Int
   uuid_pid  String    @db.Uuid
   timestamp DateTime? @db.Timestamptz(6)
+  uuid_uid  String    @db.Uuid
   folders   folders   @relation(fields: [fid], references: [fid], onDelete: NoAction, onUpdate: NoAction, map: "fid_foreign_key")
   posts     posts     @relation(fields: [uuid_pid], references: [uuid_pid], onDelete: NoAction, onUpdate: NoAction, map: "uuid_pid_foreign_key")
+  users     users     @relation(fields: [uuid_uid], references: [uuid_uid], onDelete: NoAction, onUpdate: NoAction, map: "uuid_uid_foreign_key")
 
   @@id([fid, uuid_pid], map: "folder_posts_pkey_conbined")
 }
 
 model folders {
   fid          Int            @id @default(autoincrement())
-  title        String         @db.VarChar(100)
   uuid_uid     String         @db.Uuid
+  title        String         @db.VarChar(100)
   top_image    String?        @db.VarChar
   timestamp    DateTime?      @db.Timestamptz(6)
   folder_posts folder_posts[]

@@ -96,10 +96,10 @@ export class FolderPostService {
         try {
             const folder = await this.prisma.folders.findUniqueOrThrow({
                 where: { fid: fid },
-                select: { users: { select: { uid: true }}}
+                select: { users: { select: { uid: true, uuid_uid: true }}}
             })
             if (!(uid_token && uid_token == folder.users.uid)) throw new AuthenticationError("the sended fid is not allowed to modify by the id")
-            const newFolderPosts =  uuid_pids.map((uuid_pid) =>  ({fid: fid, uuid_pid: uuid_pid}))
+            const newFolderPosts =  uuid_pids.map((uuid_pid) =>  ({fid: fid, uuid_pid: uuid_pid, uuid_uid: folder.users.uuid_uid }))
             const res = await this.prisma.folder_posts.createMany({
                 data: newFolderPosts
             })

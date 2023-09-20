@@ -1,6 +1,7 @@
 import { Field, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Collection } from 'src/collection/collection.model';
 import { Folder } from 'src/folder/folder.model';
+import { FolderPost } from 'src/folder_post/folder_post.model';
 import { Follow } from 'src/follow/follow.model';
 import { Like } from 'src/like/like.model';
 import { Link } from 'src/link/link.model';
@@ -64,6 +65,9 @@ export class User {
 
   @Field(type => [Folder], { nullable: true })
   folders?: Folder[]
+
+  @Field(type => [FolderPost], { nullable: true })
+  fodler_posts?: FolderPost[]
 
   @Field(type => [UserTag], {nullable: true})
   user_tags?: UserTag[];

@@ -42,6 +42,7 @@ type FolderPost {
   posts: Post
   timestamp: DateTime
   uuid_pid: String!
+  uuid_uid: String!
 }
 
 type Follow {
@@ -187,6 +188,7 @@ input TagInput {
 type User {
   collections: [Collection!]
   comment: String
+  fodler_posts: [FolderPost!]
   folders: [Folder!]
   followee_num: Int
   follower_num: Int

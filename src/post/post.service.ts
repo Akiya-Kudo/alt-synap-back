@@ -121,9 +121,7 @@ export class PostService {
                 skip: offset
             })
         } catch ( error ) {
-            console.log(error);
-            
-            throw new HttpException("Faild to seatch Post", HttpStatus.BAD_REQUEST)
+            throw error
         }
     }
 
