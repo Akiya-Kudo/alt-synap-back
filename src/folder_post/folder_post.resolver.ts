@@ -1,4 +1,4 @@
-import { Args, Context, Int, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthService } from 'src/auth/auth.service';
 import { FolderPostService } from './folder_post.service';
 import { FolderPost } from './folder_post.model';
@@ -11,6 +11,37 @@ export class FolderPostResolver {
         private folderPostService: FolderPostService,
         private authServise: AuthService
     ) {}
+
+    @Query(() => [FolderPost], { name: "get_folder_posts" })
+    @UseGuards(TokenGuard)
+    async getFolderPosts (
+        @Args('fid', {type: () => Int}) fid: number,
+        @Args('offset', { type: () => Int }) offset: number,
+        @Context() context
+    ) {
+        try {
+            const uid_token = context.req.idTokenUser.user_id
+            return await this.folderPostService.findFolderPosts(fid, offset, uid_token )
+        } catch (error) {
+            console.log(error);
+            throw new HttpException("Faild to get FolderPosts", HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    @Query(() => Int, { name: "count_folder_posts" })
+    @UseGuards(TokenGuard)
+    async countFolderPosts (
+        @Args('fid', {type: () => Int}) fid: number,
+        @Context() context
+    ) {
+        try {
+            const uid_token = context.req.idTokenUser.user_id
+            return await this.folderPostService.countFolderPosts(fid, uid_token )
+        } catch (error) {
+            console.log(error);
+            throw new HttpException("Faild to get FolderPosts", HttpStatus.BAD_REQUEST)
+        }
+    }
     
     @Mutation(() => [FolderPost], { name: "add_posts_to_folder"})
     @UseGuards(TokenGuard)
