@@ -10,6 +10,9 @@ export class FolderPost {
     @Field()
     uuid_pid: string;
 
+    @Field()
+    uuid_uid: string;
+
     @Field( type => GraphQLISODateTime, { nullable: true })
     timestamp?: Date;
 
