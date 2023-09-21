@@ -31,7 +31,8 @@ export class PostService {
                     users: true,
                     article_contents: true,
                     post_tags: { include: { tags: true } },
-                    likes: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : { take: 0 }
+                    likes: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : { take: 0 },
+                    folder_posts: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : {take: 0}
                 }
             })
             
@@ -114,7 +115,8 @@ export class PostService {
                             user_image: true
                         }
                     },
-                    likes: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : { take: 0 }
+                    likes: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : { take: 0 },
+                    folder_posts: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : {take: 0}
                 },
                 orderBy: sort_conditions,
                 take: 5,
@@ -198,7 +200,8 @@ export class PostService {
                             user_image: true
                         }
                     },
-                    likes: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : { take: 0 }
+                    likes: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : { take: 0 },
+                    folder_posts: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : {take: 0}
                 },
                 orderBy: { timestamp: "desc" },
                 take: !no_pagenation ? 5 : undefined,
@@ -276,7 +279,8 @@ export class PostService {
                                     user_image: true
                                 }
                             },
-                            likes: { where: { uuid_uid: uuid_uid }}
+                            likes: { where: { uuid_uid: uuid_uid }},
+                            folder_posts: { where: { uuid_uid: uuid_uid }}
                         }
                     }
                 },
