@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { AuthenticationError } from 'apollo-server-express';
 import { log } from 'console';
 import { PrismaService } from 'src/_prisma/prisma.service';
@@ -56,7 +56,8 @@ export class FolderPostService {
                                     user_image: true
                                 }
                             },
-                            likes: folder.users.uuid_uid ? { where: { uuid_uid: folder.users.uuid_uid }} : { take: 0 }
+                            likes: { where: { uuid_uid: folder.users.uuid_uid }},
+                            folder_posts:  { where: { uuid_uid: folder.users.uuid_uid }}
                         }
                     }
                 },
@@ -115,7 +116,7 @@ export class FolderPostService {
         try {
             const folder = await this.prisma.folders.findUniqueOrThrow({
                 where: { fid: fid },
-                select: { users: { select: { uid: true }}}
+                select: { users: { select: { uid: true, uuid_uid: true }}}
             })
             if (!(uid_token && uid_token == folder.users.uid)) throw new AuthenticationError("the sended fid is not allowed to modify by the id")
             const res = await this.prisma.folder_posts.deleteMany({
@@ -124,7 +125,8 @@ export class FolderPostService {
                     uuid_pid: { in: uuid_pids }
                 }
             })
-            return res.count
+            if (res.count == 0) throw new NotFoundException("find no record be hit in request post's id array, no record's are deleted")
+            return (uuid_pids.map(uuid_pid => ({ fid, uuid_pid, uuid_uid: folder.users.uuid_uid })))
         } catch (error) {throw error}
     }
 }

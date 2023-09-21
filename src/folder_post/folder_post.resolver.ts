@@ -4,6 +4,7 @@ import { FolderPostService } from './folder_post.service';
 import { FolderPost } from './folder_post.model';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { TokenGuard } from 'src/auth/token.guard';
+import { Folder } from 'src/folder/folder.model';
 
 @Resolver()
 export class FolderPostResolver {
@@ -59,7 +60,7 @@ export class FolderPostResolver {
         }
     }
 
-    @Mutation(() => Int, { name: "delete_posts_from_folder"})
+    @Mutation(() => [FolderPost], { name: "delete_posts_from_folder"})
     @UseGuards(TokenGuard)
     async deletePostsFromFolder(
         @Args('fid', {type: () => Int}) fid: number,
