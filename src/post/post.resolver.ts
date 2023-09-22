@@ -31,6 +31,21 @@ export class PostResolver {
         }
     }
 
+    @Mutation(() => Post, { name: "delete_post"})
+    @UseGuards(TokenGuard)
+    async deletePost(
+        @Args('uuid_pid') uuid_pid: string,
+        @Context() context
+    ) {
+        try {
+            const uid_token = context.req.idTokenUser.user_id
+            return await this.postService.deletePost(uuid_pid, uid_token)
+        } catch (error) {
+            console.log(error);
+            throw new HttpException("Faild to delete Link Post", HttpStatus.BAD_REQUEST)
+        }
+    }
+
 
     @Mutation(() => upsertArticlePostOutput, { name: "upsert_article_post"})
     @UseGuards(TokenGuard)
@@ -42,6 +57,7 @@ export class PostResolver {
             const uid_token = context.req.idTokenUser.user_id
             return await this.postService.upsertArticlePost(postData, uid_token)
         } catch (error) {
+            console.log(error)
             throw new HttpException("Faild to Upsert Article Post", HttpStatus.BAD_REQUEST)
         }
     }
@@ -56,6 +72,7 @@ export class PostResolver {
             const uid_token = context.req.idTokenUser.user_id
             return await this.postService.upsertLinkPost(postData, uid_token)
         } catch (error) {
+            console.log(error)
             throw new HttpException("Faild to Upsert Link Post", HttpStatus.BAD_REQUEST)
         }
     }

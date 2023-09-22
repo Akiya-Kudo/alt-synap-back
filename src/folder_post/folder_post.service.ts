@@ -23,7 +23,10 @@ export class FolderPostService {
             })
             if (!(uid_token && uid_token == folder.users.uid)) throw new AuthenticationError("the sended fid is not allowed to get by the id")
             const res = await this.prisma.folder_posts.findMany({
-                where: { fid: fid },
+                where: { 
+                    fid: fid,
+                    posts: { deleted: false }
+                },
                 include: {
                     posts: {
                         select: {
@@ -82,9 +85,10 @@ export class FolderPostService {
             })
             if (!(uid_token && uid_token == folder.users.uid)) throw new AuthenticationError("the sended fid is not allowed to get by the id")
             return this.prisma.folder_posts.count({
-                where: {
-                    fid: fid
-                }
+                where: { 
+                    fid: fid,
+                    posts: { deleted: false }
+                },
             })
         } catch (error) { throw error }
     }

@@ -102,6 +102,7 @@ type Mutation {
   delete_folder(fid: Int!): Folder!
   delete_link(lid: Int!): Link!
   delete_link_collection(lid: Int!, uuid_uid: String!): [LinkCollection!]!
+  delete_post(uuid_pid: String!): Post!
   delete_posts_from_folder(fid: Int!, uuid_pids: [String!]!): [FolderPost!]!
   follow_toggle(followee_uuid: String!): Follow!
   like_toggle(uuid_pid: String!): Like!

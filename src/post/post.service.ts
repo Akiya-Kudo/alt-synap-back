@@ -1,11 +1,10 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/_prisma/prisma.service';
 import { upsertArticlePostInput, upsertLinkPostInput } from 'src/custom_models/mutation.model';
 import {v4 as uuid_v4} from 'uuid'
 import { posts, Prisma } from '@prisma/client';
 import { Post } from './post.model';
 import { log } from 'console';
-import { PostWithTagsAndUserAndTotalCount } from 'src/custom_models/query.model';
 
 @Injectable()
 export class PostService {
@@ -52,6 +51,33 @@ export class PostService {
         } catch (error) {
             throw error
         }
+    }
+
+    async deletePost (
+        uuid_pid: string,
+        uid_token: string
+    ): Promise<Post> {
+        try {
+            const { uuid_uid } = await this.prisma.users.findUniqueOrThrow({
+                where: { uid: uid_token },
+                select: { uuid_uid: true }
+            })
+            // if (!uuid_uid) throw new NotFoundException( {message: "can't identify user"}, "authorization error")
+            const post_only_uuid_uid = await this.prisma.posts.findUniqueOrThrow({
+                where: { uuid_pid: uuid_pid },
+                select: { uuid_uid: true }
+            })
+            if (uuid_uid !== post_only_uuid_uid.uuid_uid) throw new UnauthorizedException("this request is not authorized to modify this post ")
+            return await this.prisma.posts.update({
+                where: {
+                    uuid_pid: uuid_pid
+                },
+                data: {
+                    deleted: true
+                }
+            })
+
+        } catch (error) { throw error }
     }
 
     async searchPostFromTitleAndTags (
