@@ -104,6 +104,7 @@ type Mutation {
   delete_link_collection(lid: Int!, uuid_uid: String!): [LinkCollection!]!
   delete_post(uuid_pid: String!): Post!
   delete_posts_from_folder(fid: Int!, uuid_pids: [String!]!): [FolderPost!]!
+  favorite_tag_toggle(tid: Int!): UserTag!
   follow_toggle(followee_uuid: String!): Follow!
   like_toggle(uuid_pid: String!): Like!
   remove_collection(cid: Int!): Collection!
@@ -153,6 +154,7 @@ type Query {
   get_link_collections_used(uuid_uid: String!): [LinkCollection!]
   get_link_made_by_user(uuid_uid: String!): [Link!]
   get_posts_made_by_user(no_pagenation: Boolean!, offset: Int!, selectedTagIds: [Int], uuid_uid: String!): [Post!]!
+  get_posts_user_follow(offset: Int!): [Post!]!
   get_posts_user_liked(offset: Int!, selectedTagIds: [Int]): [Post!]!
   get_published_links: [Link!]
   other_user(uuid_uid: String!): User

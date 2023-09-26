@@ -37,6 +37,11 @@ export class UserService {
         },
         folders: {
           orderBy: { timestamp: "desc" }
+        },
+
+        user_tags: {
+          include: { tags: true },
+          orderBy: {timestamp: "desc"}
         }
       }
     });

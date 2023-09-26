@@ -341,6 +341,53 @@ export class PostService {
         } catch ( error ) {throw error}
     }
 
+    async getPostUserFollow(offset: number, uid_token:string) {
+        try {
+            const { uuid_uid } = await this.prisma.users.findUniqueOrThrow({
+                where: { uid: uid_token },
+                select: { uuid_uid: true }
+            })
+            const followee_array = await this.prisma.follows.findMany({
+                where: { follower_uuid: uuid_uid },
+                select: { followee_uuid: true }
+            })
+            const followee_uuid_array = followee_array.map(followee => followee.followee_uuid)
+            return await this.prisma.posts.findMany({
+                where: {
+                    uuid_uid: { in: followee_uuid_array },
+                    publish: true,
+                    deleted: false,
+                },
+                include: {
+                    post_tags: {
+                        select: {
+                            tags: {
+                                select: {
+                                    tid: true,
+                                    tag_name: true,
+                                    display_name: true,
+                                    tag_image: true
+                                }
+                            }
+                        }
+                    },
+                    users: {
+                        select: {
+                            uuid_uid: true,
+                            user_name: true,
+                            user_image: true
+                        }
+                    },
+                    likes: { where: { uuid_uid: uuid_uid }},
+                    folder_posts: { where: { uuid_uid: uuid_uid }}
+                },
+                orderBy: {timestamp: "desc"},
+                take: 5,
+                skip: offset
+            })
+        } catch(error) { throw error }
+    }
+
     async upsertArticlePost(postData: upsertArticlePostInput, uid_token: string) {
         try {
             const transaction = await this.prisma.$transaction(async (prisma) => {
