@@ -58,12 +58,12 @@ export class FollowService {
     async FollowCreateOrDelete( followee_uuid: string, uid_token: string ) {
         try {
             const transaction = await this.prisma.$transaction(async (prisma) => {
-                // To get like record is exist and handle it, get user's id
+                // To get follow record is exist and handle it, get user's id
                 const { uuid_uid } = await this.prisma.users.findUniqueOrThrow({
                     where: { uid: uid_token },
                     select: { uuid_uid: true }
                 })
-                // check whick the record is exist or not
+                // check which the record is exist or not
                 const follow = await this.prisma.follows.findUnique({
                     where: {
                         follower_uuid_followee_uuid: {

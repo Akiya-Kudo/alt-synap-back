@@ -198,4 +198,19 @@ export class PostResolver {
             throw new HttpException("Faild to count Post user liked", HttpStatus.BAD_REQUEST)
         }
     }
+
+    @Query(() => [Post],{ name: "get_posts_user_follow" })
+    @UseGuards(TokenGuard)
+    async getPostsUserFollow (
+        @Args('offset', { type: () => Int }) offset: number,
+        @Context() context
+    ) {
+        try {
+            const uid_token: string | null = context.req.idTokenUser?.user_id
+            return await this.postService.getPostUserFollow( offset, uid_token )
+        } catch (error) {
+            console.error(error);
+            throw new HttpException("Faild to get Post liked by user", HttpStatus.BAD_REQUEST)
+        }
+    }
 } 
