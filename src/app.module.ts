@@ -20,6 +20,7 @@ import { FollowModule } from './follow/follow.module';
 import { FolderModule } from './folder/folder.module';
 import { FolderPostModule } from './folder_post/folder_post.module';
 import { UserTagModule } from './user_tag/user_tag.module';
+import { RedisModule } from './_redis/redis.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { UserTagModule } from './user_tag/user_tag.module';
     FolderModule,
     FolderPostModule,
     UserTagModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

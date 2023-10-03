@@ -1,14 +1,18 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/_prisma/prisma.service';
 import { upsertArticlePostInput, upsertLinkPostInput } from 'src/custom_models/mutation.model';
 import {v4 as uuid_v4} from 'uuid'
 import { posts, Prisma } from '@prisma/client';
 import { Post } from './post.model';
 import { log } from 'console';
+import { Redis } from 'ioredis';
 
 @Injectable()
 export class PostService {
-    constructor(private prisma: PrismaService) {}
+    constructor(
+        private prisma: PrismaService,
+        @Inject('REDIS_CLIENT') private readonly redis: Redis
+        ) {}
 
 
     async findPost ( uuid_pid: string, uid_token: string ): Promise<Post> {
@@ -34,7 +38,7 @@ export class PostService {
                     folder_posts: _uuid_uid ? { where: { uuid_uid: _uuid_uid }} : {take: 0}
                 }
             })
-            
+            if (!data) throw new HttpException('post is not existed', HttpStatus.BAD_REQUEST)
             if (data.deleted) throw new HttpException("post is already deleted", HttpStatus.BAD_REQUEST)
             if (!data.publish) {
                 if (uid_token == data.users.uid) console.log("authentication success")
@@ -399,6 +403,8 @@ export class PostService {
                 // nested variables pre difinitions
                 let post = null as posts
                 let pts = [] as {tid: number, uuid_pid: string}[]
+                let pts_pre = [] as {tid: number, uuid_pid: string}[]
+                let pre_pts_not_used = [] as {tid: number, uuid_pid: string}[]
                 let tags_newPost = [] as {tid: number, tag_name: string, tag_content_num: number}[]
 
                 if (postData.uuid_pid == null || postData.uuid_pid == undefined ) {
@@ -481,8 +487,9 @@ export class PostService {
 
                     await prisma.tags.createMany({
                         data: tags_not_in_db,
-                        skipDuplicates: true  //例外時用に定義 skip時にもtidのincrementが増加するため tags_not_in_dbによりskipを回避
+                        skipDuplicates: true  //例外時用に定義 skip時にも作成レコードのtidのincrementが増加するため tags_not_in_dbによりskipを回避
                     })
+
                     //get tags object  & tid
                     tags_newPost = await prisma.tags.findMany({
                         where: {
@@ -491,6 +498,17 @@ export class PostService {
                             }
                         }
                     })
+
+
+                    //redis increment
+                    pts_pre = await this.prisma.post_tags.findMany({
+                        where: { uuid_pid: uuid_pid }
+                    })
+                    const tags_notin_post_tags = tags_newPost.filter(tag_new => pts_pre.every(post_tag => post_tag.tid !== tag_new.tid ))
+                    tags_notin_post_tags.forEach(async(tag) => {
+                        const res = await this.redis.zincrby( "tag_ranking", 1, tag.tid )
+                    })
+
 
                 // post_tags insert skip if already exist
                     pts = tags_newPost.map(tag=>({
@@ -501,6 +519,11 @@ export class PostService {
                         data: pts,
                         skipDuplicates: true,
                     })
+
+                    // for redis decrement
+                    pre_pts_not_used =  pts_pre.filter(post_tag_pre => pts.every(post_tag_new => post_tag_new.tid !== post_tag_pre.tid))
+                } else {
+                    pre_pts_not_used = await this.prisma.post_tags.findMany({ where: { uuid_pid: uuid_pid }})
                 }
                 // post_tags deleteMany whitch deleted from new post
                 const tids = pts.map(pt=>pt.tid)
@@ -510,10 +533,17 @@ export class PostService {
                         uuid_pid: uuid_pid,
                     }
                 })
+
+
+                // redis decmrement
+                pre_pts_not_used.forEach(async(post_tag) => {
+                    const res = await this.redis.zincrby( "tag_ranking", -1, post_tag.tid )
+                })
+
                 
                 //response data shaping
                 let res_post = {...post} as Post
-                log(post)
+                // log(post)
                 const res_tags = tags_newPost
                 // const res_tags = await prisma.tags.findMany({where: {tid: { in: tids }}})
                 const res = {post: res_post, tags: res_tags}
