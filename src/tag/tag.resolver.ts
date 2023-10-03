@@ -42,4 +42,13 @@ export class TagResolver {
             
         }
     }
+
+    @Query(() => [Tag],  { name: "hot_tags" })
+    async getTagRanking() {
+        try {
+            return await this.tagService.getTagRankingList()
+        } catch (error) { 
+            throw new HttpException("Faild to get hot tags", HttpStatus.BAD_REQUEST)
+        }
+    }
 }

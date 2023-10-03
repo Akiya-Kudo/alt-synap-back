@@ -1,9 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { log } from 'console';
+import { Redis } from 'ioredis';
 import { PrismaService } from 'src/_prisma/prisma.service';
 
 @Injectable()
 export class TagService {
-    constructor(private prisma: PrismaService) {}
+    constructor(
+        private prisma: PrismaService,
+        @Inject('REDIS_CLIENT') private readonly redis: Redis
+        ) {}
     async searchTags(
         words: string[]
     ) {
@@ -60,5 +65,15 @@ export class TagService {
         } catch (error) {
             throw error
         }
+    }
+
+    async getTagRankingList () {
+        try {
+            const res = await this.redis.zrange( "tag_ranking", 0, 10, "REV" )
+            const tids = res.map(Number)
+            return await this.prisma.tags.findMany({
+                where: {tid: { in: tids }}
+            })
+        } catch (error) { throw error }
     }
 }
