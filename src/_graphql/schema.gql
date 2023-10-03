@@ -157,6 +157,7 @@ type Query {
   get_posts_user_follow(offset: Int!): [Post!]!
   get_posts_user_liked(offset: Int!, selectedTagIds: [Int]): [Post!]!
   get_published_links: [Link!]
+  hot_tags: [Tag!]!
   other_user(uuid_uid: String!): User
   post(uuid_pid: String!): Post!
   search_post(offset: Int!, searchString: String, selectedTagId: Int, sortType: Int!): [Post!]!
