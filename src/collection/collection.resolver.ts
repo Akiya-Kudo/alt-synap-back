@@ -1,11 +1,18 @@
-import { Args, Int, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Resolver } from '@nestjs/graphql';
 import { CollectionService } from './collection.service';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { Collection } from './collection.model';
+import { AuthService } from 'src/auth/auth.service';
+import { User } from 'src/user/user.model';
+import { log } from 'console';
+import { TokenGuard } from 'src/auth/token.guard';
 
 @Resolver()
 export class CollectionResolver {
-    constructor( private collectionService: CollectionService) {} 
+    constructor( 
+        private collectionService: CollectionService,
+        private authServise: AuthService
+        ) {} 
 
     @Mutation(() => Collection, { name: "remove_collection"})
     async removeCollection(
@@ -27,6 +34,20 @@ export class CollectionResolver {
             return await this.collectionService.createCollection(collection_name, uuid_uid)
         } catch (error) {
             throw new HttpException("Faild to create collection: " + error , HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    @Mutation(() => User, { name: 'set_top_collection' })
+    @UseGuards(TokenGuard)
+    async setTopCollection(
+        @Args('cid', { type: () => Int! }) cid: number,
+        @Context() context
+    ) {
+        try {
+            const uid_token = context.req.idTokenUser.user_id
+            return await this.collectionService.setTopCollection(cid, uid_token)
+        } catch (error) {
+            throw new HttpException("Faild to set top collection: " + error , HttpStatus.BAD_REQUEST)
         }
     }
 }

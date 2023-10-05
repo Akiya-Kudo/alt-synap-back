@@ -109,6 +109,7 @@ type Mutation {
   like_toggle(uuid_pid: String!): Like!
   remove_collection(cid: Int!): Collection!
   remove_link_from_collection(cid: Int!, lid: Int!): LinkCollection!
+  set_top_collection(cid: Int!): User!
   update_user_info(userData: updateUserInput!): User!
   upsert_article_post(postData: upsertArticlePostInput!): upsertArticlePostOutput!
   upsert_folder(folderData: upsertFolderInput!): Folder!

@@ -1,50 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../_prisma/prisma.service';
 import { users, Prisma } from '@prisma/client';
 import { User } from './user.model';
 import { updateUserInput } from 'src/custom_models/mutation.model';
 import { log } from 'console';
+import { Redis } from 'ioredis';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject('REDIS_CLIENT') private readonly redis: Redis
+    ) {}
 
   async user(uid: string) {
-    return this.prisma.users.findUniqueOrThrow({
-      where: {uid: uid},
-      select: {
-        uuid_uid: true,
-        user_name: true,
-        user_image: true,
-        comment: true,
-        followee_num: true,
-        follower_num: true,
-        lang_type: true,
-        top_collection: true,
+    try {
+      const user = await this.prisma.users.findUniqueOrThrow({
+        where: {uid: uid},
+        select: {
+          uuid_uid: true,
+          user_name: true,
+          user_image: true,
+          comment: true,
+          followee_num: true,
+          follower_num: true,
+          lang_type: true,
 
-        collections: {
-          where: {deleted: false},
-          include: {
+          collections: {
+            where: {deleted: false},
+            include: {
 
-            link_collections: {
-              where: {deleted: false},
-              include: {
+              link_collections: {
+                where: {deleted: false},
+                include: {
 
-                links: true
+                  links: true
+                }
               }
             }
-          }
-        },
-        folders: {
-          orderBy: { timestamp: "desc" }
-        },
+          },
+          folders: {
+            orderBy: { timestamp: "desc" }
+          },
 
-        user_tags: {
-          include: { tags: true },
-          orderBy: {timestamp: "desc"}
+          user_tags: {
+            include: { tags: true },
+            orderBy: {timestamp: "desc"}
+          }
         }
-      }
-    });
+      });
+      const top_cid = await this.redis.hget("top_display_cids", user.uuid_uid)
+      return ({
+        ...user,
+        top_collection: top_cid
+      })
+    } catch (error) { throw error }
   }
 
   async other_user(
