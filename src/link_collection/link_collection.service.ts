@@ -1,10 +1,14 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/_prisma/prisma.service';
 import { LinkCollection } from './link_collection.model';
+import { Redis } from 'ioredis';
 
 @Injectable()
 export class LinkCollectionService {
-    constructor(private prisma: PrismaService) {}
+    constructor(
+        private prisma: PrismaService,
+        @Inject('REDIS_CLIENT') private readonly redis: Redis
+        ) {}
 
     async getUserLinkCollection(uuid_uid: string): Promise<LinkCollection[]> {
         try {
@@ -26,13 +30,12 @@ export class LinkCollectionService {
                     }
                 }
             })
-        } catch ( error ) {
-            throw error
-        }
+        } catch ( error ) { throw error }
     }
 
     async upsertLinkCollection(lid: number, cid: number, uuid_uid: string) {
         try {
+            const res = await this.redis.zincrby("link_ranking", 1, lid)
             return this.prisma.link_collections.upsert({
                 where: {
                     lid_cid: {
@@ -58,17 +61,20 @@ export class LinkCollectionService {
     }
 
     async updateLinkCollectionToDeleted(lid: number, cid: number) {
-        return this.prisma.link_collections.update({
-            where: {
-                lid_cid: {
-                    lid: lid,
-                    cid: cid
+        try {
+            const res = await this.redis.zincrby("link_ranking", -1, lid)
+            return this.prisma.link_collections.update({
+                where: {
+                    lid_cid: {
+                        lid: lid,
+                        cid: cid
+                    }
+                },
+                data: {
+                    deleted: true
                 }
-            },
-            data: {
-                deleted: true
-            }
-        })
+            })
+        } catch (error) {throw error}
     }
 
     async deleteLinkCollection(lid: number, uuid_uid: string) {

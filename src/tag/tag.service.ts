@@ -70,9 +70,12 @@ export class TagService {
     async getTagRankingList () {
         try {
             const res = await this.redis.zrange( "tag_ranking", 0, 10, "REV" )
-            const tids = res.map(Number)
-            return await this.prisma.tags.findMany({
-                where: {tid: { in: tids }}
+            const tids_top = res.map(Number)
+            const tags = await this.prisma.tags.findMany({
+                where: {tid: { in: tids_top }}
+            })
+            return tags.sort((a, b) => {
+                return tids_top.indexOf(a.tid) - tids_top.indexOf(b.tid)
             })
         } catch (error) { throw error }
     }

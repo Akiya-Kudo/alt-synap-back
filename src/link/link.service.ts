@@ -1,13 +1,17 @@
 
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/_prisma/prisma.service';
 import { Link } from './link.model';
 import { createLinkInput } from 'src/custom_models/mutation.model';
+import { Redis } from 'ioredis';
 
 
 @Injectable()
 export class LinkService {
-    constructor( private prisma: PrismaService ) {}
+    constructor( 
+        private prisma: PrismaService,
+        @Inject('REDIS_CLIENT') private readonly redis: Redis
+        ) {}
 
     async createLink(linkData: createLinkInput, uid_token: string): Promise<Link> {
         try {
@@ -84,5 +88,27 @@ export class LinkService {
         } catch (error) {
             throw new HttpException("Faild to delete link & link_collection", HttpStatus.BAD_REQUEST)
         }
+    }
+
+    async getLinkRankingList() {
+        try {
+            const res = await this.redis.zrange( "link_ranking", 0, 10, "REV")
+            const top_lids = res.map(Number)
+            const links = await this.prisma.links.findMany({
+                where: {lid: { in: top_lids }},
+                include: {
+                    users: {
+                        select: {
+                            uuid_uid: true,
+                            user_name: true,
+                            user_image: true,
+                        }
+                    }
+                }
+            })
+            return links.sort((a, b) => {
+                return top_lids.indexOf(a.lid) - top_lids.indexOf(b.lid)
+            })
+        } catch (error) {throw error}
     }
 }
