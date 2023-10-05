@@ -1,4 +1,4 @@
-import { Args, Context, Int, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CollectionService } from './collection.service';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { Collection } from './collection.model';
@@ -48,6 +48,15 @@ export class CollectionResolver {
             return await this.collectionService.setTopCollection(cid, uid_token)
         } catch (error) {
             throw new HttpException("Faild to set top collection: " + error , HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    @Query(() => [Collection], { name: 'get_guest_collections' })
+    async getGuestCollection() {
+        try {
+            return await this.collectionService.getGuestCollection()
+        } catch (error) {
+            throw new HttpException("Faild to get guest collections: " + error , HttpStatus.BAD_REQUEST)
         }
     }
 }

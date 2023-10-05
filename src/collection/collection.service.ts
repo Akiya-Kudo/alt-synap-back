@@ -57,4 +57,17 @@ export class CollectionService {
             })
         } catch (error) { throw error }
     }
+
+    async getGuestCollection() {
+        try {
+            return await this.prisma.collections.findMany({
+                where: { uuid_uid: "c12cd1fe-85ff-4fd3-8d67-3d1cd12b91bb" }, // id is official's
+                include: { link_collections: {
+                    include: {
+                        links: true
+                    }
+                }}
+            })
+        } catch (error) { throw error }
+    }
 }

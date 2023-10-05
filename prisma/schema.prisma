@@ -62,7 +62,6 @@ model users {
   followee_num                         Int                @default(0)
   lang_type                            Int                @default(0) @db.SmallInt
   uuid_uid                             String             @unique(map: "uuid_unique") @db.Uuid
-  top_collection                       Int?
   collections                          collections[]
   folder_posts                         folder_posts[]
   folders                              folders[]
