@@ -152,6 +152,7 @@ type Query {
   count_total_posts(searchString: String, selectedTagId: Int): Float!
   get_folder_posts(fid: Int!, offset: Int!): [FolderPost!]!
   get_follow_list(is_follower_list: Boolean!, offset: Int!, uuid_uid: String!): [Follow!]!
+  get_guest_collections: [Collection!]!
   get_link_collections_used(uuid_uid: String!): [LinkCollection!]
   get_link_made_by_user(uuid_uid: String!): [Link!]
   get_posts_made_by_user(no_pagenation: Boolean!, offset: Int!, selectedTagIds: [Int], uuid_uid: String!): [Post!]!

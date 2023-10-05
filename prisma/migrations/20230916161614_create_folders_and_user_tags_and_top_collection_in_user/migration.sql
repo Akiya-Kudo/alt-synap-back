@@ -1,5 +1,5 @@
--- AlterTable
-ALTER TABLE "users" ADD COLUMN     "top_collection" INTEGER;
+-- -- AlterTable
+-- ALTER TABLE "users" ADD COLUMN     "top_collection" INTEGER;
 
 -- CreateTable
 CREATE TABLE "folder_posts" (
