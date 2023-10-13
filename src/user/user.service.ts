@@ -33,8 +33,11 @@ export class UserService {
               link_collections: {
                 where: {deleted: false},
                 include: {
-
-                  links: true
+                  links: {
+                    include: {
+                      users: { select: { uuid_uid: true, user_name: true, user_image: true }}
+                    }
+                  }
                 }
               }
             }
