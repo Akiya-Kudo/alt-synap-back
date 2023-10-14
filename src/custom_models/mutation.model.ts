@@ -103,6 +103,12 @@ export class createUserInput {
 
     @Field( type => Int, { nullable: true })
     lang_type: number;
+
+    @Field({ nullable: true })
+    user_name: string;
+
+    @Field({ nullable: true })
+    user_image: string;
 }
 
 @InputType()

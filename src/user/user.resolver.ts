@@ -46,12 +46,13 @@ export class UserResolver {
     @Args('userData') 
     userData: createUserInput
   ) {
-    const { uid, uuid_uid, lang_type } = userData;
-    console.log(uid, uuid_uid );
+    const { uid, uuid_uid, user_name, user_image, lang_type } = userData;
     return await this.userService.createUser({ 
       uid, 
       uuid_uid,
-      lang_type
+      lang_type,
+      user_name,
+      user_image
     });
   }
 
