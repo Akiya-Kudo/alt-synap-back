@@ -6,6 +6,7 @@ import { posts, Prisma } from '@prisma/client';
 import { Post } from './post.model';
 import { log } from 'console';
 import { Redis } from 'ioredis';
+import { Tag } from 'src/tag/tag.model';
 
 @Injectable()
 export class PostService {
@@ -406,6 +407,16 @@ export class PostService {
                 let pts_pre = [] as {tid: number, uuid_pid: string}[]
                 let pre_pts_not_used = [] as {tid: number, uuid_pid: string}[]
                 let tags_newPost = [] as {tid: number, tag_name: string, tag_content_num: number}[]
+                let tag_names_string = ""
+
+                if (tags_input.length > 0) {
+                    const tags_for_title = await prisma.tags.findMany({
+                        where: {
+                            tag_name: { in: tags_input.map(tag => tag.tag_name) }
+                        }
+                    })
+                    tag_names_string = tags_input.map(tag => tag.tag_name).join(" ") + " " + tags_for_title.filter(tag_ => !tags_input.some(tag => tag.tag_name == tag_.display_name)).map(tag => tag.display_name).join(" ")
+                }
 
                 if (postData.uuid_pid == null || postData.uuid_pid == undefined ) {
                 // create post
@@ -423,7 +434,7 @@ export class PostService {
                             users: { connect: {uuid_uid: uuid_uid} },
                             title,
                             title_lower,
-                            title_tags_search_text: title_lower,
+                            title_tags_search_text: title_lower + tag_names_string,
                             top_image,
                             top_link,
                             content_type,
@@ -454,6 +465,7 @@ export class PostService {
                         data: {
                             title,
                             title_lower,
+                            title_tags_search_text: title_lower + tag_names_string,
                             top_image,
                             top_link,
                             publish,
@@ -498,7 +510,20 @@ export class PostService {
                             }
                         }
                     })
-
+                    
+                    //この方法でtitle with tagを更新するのは無理でした? naze
+                    // log(uuid_pid)
+                    // const tag_names_string = tags_newPost.map((tag: Tag) => {
+                    //     if (tag.tag_name === tag.display_name) return " " + tag.tag_name
+                    //     else return " " + tag.tag_name + " " + tag.display_name
+                    // }).join(" ")
+                    // const new_title_post = await this.prisma.posts.update({
+                    //     where: { uuid_pid: uuid_pid },
+                    //     data: {
+                    //         title_tags_search_text: title_lower + tag_names_string
+                    //     }
+                    // })
+                    // log(new_title_post)
 
                     //redis increment
                     pts_pre = await this.prisma.post_tags.findMany({
@@ -605,6 +630,7 @@ export class PostService {
                         data: {
                             title,
                             title_lower,
+                            title_tags_search_text: title_lower,
                             top_link,
                             publish
                         },
