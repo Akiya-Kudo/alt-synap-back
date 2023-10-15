@@ -15,12 +15,13 @@ export class UserResolver {
     ) {}
 
   @Query(() => User, { name: 'user', nullable: true })
-  async getUser(
-    @Args('uid') 
-    uid: string
+  @UseGuards(TokenGuard)
+  async getLoginUser(
+    @Context() context
   ) {
     try {
-      return await this.userService.user( uid );
+      const uid_token: string = context.req.idTokenUser?.user_id 
+      return await this.userService.user( uid_token );
     } catch (error) {
       log(error)
       throw new HttpException("Faild to get user infomation", HttpStatus.BAD_REQUEST)
@@ -66,7 +67,7 @@ export class UserResolver {
       const uid_token = context.req.idTokenUser.user_id
       return await this.userService.updateUser(userData, uid_token)
     } catch (error) {
-        throw new HttpException("Faild to Upsert Post", HttpStatus.BAD_REQUEST)
+        throw new HttpException("Faild to update user info", HttpStatus.BAD_REQUEST)
     }
 
   }
