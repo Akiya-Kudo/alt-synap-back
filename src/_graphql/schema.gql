@@ -237,7 +237,6 @@ input createLinkInput {
 
 input createUserInput {
   lang_type: Int
-  uid: ID!
   user_image: String
   user_name: String
   uuid_uid: ID!

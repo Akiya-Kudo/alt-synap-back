@@ -20,7 +20,7 @@ export class UserResolver {
     @Context() context
   ) {
     try {
-      const uid_token: string = context.req.idTokenUser?.user_id 
+      const uid_token: string = context.req.idTokenUser?.user_id
       return await this.userService.user( uid_token );
     } catch (error) {
       log(error)
@@ -43,18 +43,26 @@ export class UserResolver {
   }
 
   @Mutation(() => User, { name: "create_user"})
+  @UseGuards(TokenGuard)
   async createUser(
     @Args('userData') 
-    userData: createUserInput
+    userData: createUserInput,
+    @Context() context
   ) {
-    const { uid, uuid_uid, user_name, user_image, lang_type } = userData;
-    return await this.userService.createUser({ 
-      uid, 
-      uuid_uid,
-      lang_type,
-      user_name,
-      user_image
-    });
+    try {
+      const uid_token: string = context.req.idTokenUser?.user_id 
+      const { uuid_uid, user_name, user_image, lang_type } = userData;
+      return await this.userService.createUser({ 
+        uid: uid_token,
+        uuid_uid,
+        lang_type,
+        user_name,
+        user_image
+      });
+    } catch (error) {
+      log(error)
+      throw new HttpException("Faild to create users infomation", HttpStatus.BAD_REQUEST)
+    }
   }
 
   @Mutation(() => User, { name: "update_user_info" })
@@ -67,6 +75,7 @@ export class UserResolver {
       const uid_token = context.req.idTokenUser.user_id
       return await this.userService.updateUser(userData, uid_token)
     } catch (error) {
+      log(error)
         throw new HttpException("Faild to update user info", HttpStatus.BAD_REQUEST)
     }
 

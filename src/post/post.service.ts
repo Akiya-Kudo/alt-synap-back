@@ -102,6 +102,7 @@ export class PostService {
                 })
                 _uuid_uid = uuid_uid
             }
+            
             const words_conditions = (words && words.length!=0) 
             ? words.map( word => ({ title_tags_search_text: { contains: word }}) ) 
             : []
@@ -510,20 +511,6 @@ export class PostService {
                             }
                         }
                     })
-                    
-                    //この方法でtitle with tagを更新するのは無理でした? naze
-                    // log(uuid_pid)
-                    // const tag_names_string = tags_newPost.map((tag: Tag) => {
-                    //     if (tag.tag_name === tag.display_name) return " " + tag.tag_name
-                    //     else return " " + tag.tag_name + " " + tag.display_name
-                    // }).join(" ")
-                    // const new_title_post = await this.prisma.posts.update({
-                    //     where: { uuid_pid: uuid_pid },
-                    //     data: {
-                    //         title_tags_search_text: title_lower + tag_names_string
-                    //     }
-                    // })
-                    // log(new_title_post)
 
                     //redis increment
                     pts_pre = await this.prisma.post_tags.findMany({
