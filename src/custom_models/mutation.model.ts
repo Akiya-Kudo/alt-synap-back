@@ -95,9 +95,6 @@ export class updateUserInput {
 
 @InputType()
 export class createUserInput {
-    @Field( type => ID)
-    uid: string;
-
     @Field( type => ID )
     uuid_uid: string;
 

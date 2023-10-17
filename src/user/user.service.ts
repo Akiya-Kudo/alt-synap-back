@@ -15,7 +15,7 @@ export class UserService {
 
   async user(uid: string) {
     try {
-      const user = await this.prisma.users.findUniqueOrThrow({
+      const user = await this.prisma.users.findUnique({
         where: {uid: uid},
         select: {
           uuid_uid: true,
@@ -52,11 +52,15 @@ export class UserService {
           }
         }
       });
-      const top_cid = await this.redis.hget("top_display_cids", user.uuid_uid)
-      return ({
-        ...user,
-        top_collection: top_cid
-      })
+      if (user) {
+        const top_cid = await this.redis.hget("top_display_cids", user.uuid_uid)
+        return ({
+          ...user,
+          top_collection: top_cid
+        })
+      } else {
+        return null
+      }
     } catch (error) { throw error }
   }
 
@@ -96,8 +100,37 @@ export class UserService {
     return this.prisma.users.findMany();
   }
 
-  async createUser(data: Prisma.usersCreateInput): Promise<users> {
-    return this.prisma.users.create({ data });
+  async createUser(data: Prisma.usersCreateInput): Promise<User> {
+    try {
+      const user_exist = await this.prisma.users.findUnique({
+        where: {uid: data.uid},
+        select: {
+          uuid_uid: true,
+          user_name: true,
+          user_image: true,
+          comment: true,
+          follower_num: true,
+          followee_num: true,
+          lang_type: true
+        }
+      })
+      if (!user_exist) {
+        return this.prisma.users.create({ 
+          data,
+          select: {
+            uuid_uid: true,
+            user_name: true,
+            user_image: true,
+            comment: true,
+            follower_num: true,
+            followee_num: true,
+            lang_type: true
+          }
+        });
+      } else {
+        return user_exist
+      }
+    } catch (error) { throw error }
   }
 
   async updateUser(userData: updateUserInput, uid_token: string) {
