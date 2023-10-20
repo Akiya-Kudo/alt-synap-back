@@ -54,13 +54,4 @@ export class LinkResolver {
             throw new HttpException("Faild to create new link", HttpStatus.BAD_REQUEST)
         }
     }
-
-    @Query( () => [Link], { name: 'hot_links', nullable: true })
-    async getLinkRanking() {
-        try {
-            return  await this.linkService.getLinkRankingList()
-        } catch (error) {
-            throw new HttpException("Faild to get hot links", HttpStatus.BAD_REQUEST)
-        }
-    }
 }

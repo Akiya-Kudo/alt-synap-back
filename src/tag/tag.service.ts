@@ -79,4 +79,32 @@ export class TagService {
             })
         } catch (error) { throw error }
     }
+
+    async addjustTagRanking () {
+        try {
+            const tidAndScoreArrayTop100 = await this.redis.zrevrange("tag_ranking", 0, -1, "WITHSCORES");
+            const tagsTop100 = [];
+    
+            for (let i = 0; i < tidAndScoreArrayTop100.length; i += 2) {
+                const tid = tidAndScoreArrayTop100[i];
+                const score = parseInt(tidAndScoreArrayTop100[i + 1], 10) / 2;
+                tagsTop100.push({ tid, score: score.toString() });
+            }
+            
+            const tidAndScoreArrayTop100New = tagsTop100.flatMap(tag => [tag.score, tag.tid]);
+            let insertTagsTop100 = null
+            if (tagsTop100.length > 0) {
+                insertTagsTop100 = await this.redis.zadd("tag_ranking", ...tidAndScoreArrayTop100New);
+            }
+
+            // for (let i = 0; i < 30; i+=1) {
+            //     insertTagsTop100 = await this.redis.zadd("tag_ranking", 111+i,111+i,222+i,222+i,333+i,333+i,444+i,444+i,555+i,555+i,666+i,666+i,777+i,777+i,888+i,888+i,999+i,999+i);
+            // }
+
+            
+            const len = await this.redis.zcard("tag_ranking")
+            const deletedTagRankingBack100 = await this.redis.zremrangebyrank("tag_ranking", 0, len - 101);
+            return tagsTop100;
+        } catch (error) { throw error }
+    }
 }

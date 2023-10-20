@@ -35,7 +35,6 @@ export class LinkCollectionService {
 
     async upsertLinkCollection(lid: number, cid: number, uuid_uid: string) {
         try {
-            const res = await this.redis.zincrby("link_ranking", 1, lid)
             return this.prisma.link_collections.upsert({
                 where: {
                     lid_cid: {
@@ -62,7 +61,6 @@ export class LinkCollectionService {
 
     async updateLinkCollectionToDeleted(lid: number, cid: number) {
         try {
-            const res = await this.redis.zincrby("link_ranking", -1, lid)
             return this.prisma.link_collections.update({
                 where: {
                     lid_cid: {
