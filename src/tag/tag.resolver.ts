@@ -1,6 +1,6 @@
-import { Args, Int, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { TagService } from './tag.service';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus } from '@nestjs/common';
 import { Tag } from './tag.model';
 
 @Resolver()
@@ -49,6 +49,19 @@ export class TagResolver {
             return await this.tagService.getTagRankingList()
         } catch (error) { 
             throw new HttpException("Faild to get hot tags", HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    @Mutation(() => [Tag], { name: "adjust_tag_ranking" })
+    async addjustTagRanking(
+        @Args('key') key: string
+    ) {
+        try {
+            if (key !== "aiueo") throw new ForbiddenException("this key is not correct")
+            return await this.tagService.addjustTagRanking()
+        } catch (error) {
+            console.log(error);
+            throw new HttpException("Faild to addjust tag_ranking", HttpStatus.BAD_REQUEST)
         }
     }
 }

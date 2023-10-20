@@ -89,26 +89,4 @@ export class LinkService {
             throw new HttpException("Faild to delete link & link_collection", HttpStatus.BAD_REQUEST)
         }
     }
-
-    async getLinkRankingList() {
-        try {
-            const res = await this.redis.zrange( "link_ranking", 0, 10, "REV")
-            const top_lids = res.map(Number)
-            const links = await this.prisma.links.findMany({
-                where: {lid: { in: top_lids }},
-                include: {
-                    users: {
-                        select: {
-                            uuid_uid: true,
-                            user_name: true,
-                            user_image: true,
-                        }
-                    }
-                }
-            })
-            return links.sort((a, b) => {
-                return top_lids.indexOf(a.lid) - top_lids.indexOf(b.lid)
-            })
-        } catch (error) {throw error}
-    }
 }

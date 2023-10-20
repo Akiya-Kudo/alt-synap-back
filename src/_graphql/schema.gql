@@ -96,6 +96,7 @@ type LinkCollection {
 type Mutation {
   add_link_to_collection(cid: Int!, lid: Int!, uuid_uid: String!): LinkCollection!
   add_posts_to_folder(fid: Int!, uuid_pids: [String!]!): [FolderPost!]!
+  adjust_tag_ranking(key: String!): [Tag!]!
   create_collection(collection_name: String!, uuid_uid: String!): Collection!
   create_link(linkData: createLinkInput!): Link!
   create_user(userData: createUserInput!): User!
@@ -159,7 +160,6 @@ type Query {
   get_posts_user_follow(offset: Int!): [Post!]!
   get_posts_user_liked(offset: Int!, selectedTagIds: [Int]): [Post!]!
   get_published_links: [Link!]
-  hot_links: [Link!]
   hot_tags: [Tag!]!
   other_user(uuid_uid: String!): User
   post(uuid_pid: String!): Post!
