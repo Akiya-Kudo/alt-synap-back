@@ -74,6 +74,7 @@ export class TagService {
             const tags = await this.prisma.tags.findMany({
                 where: {tid: { in: tids_top }}
             })
+            
             return tags.sort((a, b) => {
                 return tids_top.indexOf(a.tid) - tids_top.indexOf(b.tid)
             })
