@@ -10,7 +10,8 @@ async function bootstrap() {
   })
   const app = await NestFactory.create(AppModule);
   await app.enableCors({
-    origin: ["https://alt-synap-front.vercel.app", "https://tipsy-search.net", "http://localhost:3000"],
+    // origin: ["https://alt-synap-front.vercel.app", "https://tipsy-search.net", "http://localhost:3000"],
+    origin: '*',
     methods: 'POST,GET',
   })
   await app.listen(4000);
