@@ -3,8 +3,8 @@ import { LinkService } from './link.service';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { Link } from './link.model';
 import { Query } from '@nestjs/graphql';
-import { createLinkInput } from 'src/custom_models/mutation.model';
-import { TokenGuard } from 'src/auth/token.guard';
+import { createLinkInput } from '../custom_models/mutation.model';
+import { TokenGuard } from '../auth/token.guard';
 
 @Resolver()
 export class LinkResolver {

@@ -2,10 +2,10 @@ import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CollectionService } from './collection.service';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { Collection } from './collection.model';
-import { AuthService } from 'src/auth/auth.service';
-import { User } from 'src/user/user.model';
+import { AuthService } from '../auth/auth.service';
+import { User } from '../user/user.model';
 import { log } from 'console';
-import { TokenGuard } from 'src/auth/token.guard';
+import { TokenGuard } from '../auth/token.guard';
 
 @Resolver()
 export class CollectionResolver {

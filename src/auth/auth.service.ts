@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { log } from 'console';
 import admin from 'firebase-admin'
-import { PrismaService } from 'src/_prisma/prisma.service';
+import { PrismaService } from '../_prisma/prisma.service';
 
 @Injectable()
 export class AuthService {

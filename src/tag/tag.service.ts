@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { log } from 'console';
 import { Redis } from 'ioredis';
-import { PrismaService } from 'src/_prisma/prisma.service';
+import { PrismaService } from '../_prisma/prisma.service';
 
 @Injectable()
 export class TagService {

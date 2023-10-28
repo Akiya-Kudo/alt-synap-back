@@ -1,9 +1,9 @@
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from './user.model';
 import { UserService } from './user.service';
-import { createUserInput, updateUserInput } from 'src/custom_models/mutation.model';
-import { CollectionService } from 'src/collection/collection.service';
-import { TokenGuard, TokenSecretGuard } from 'src/auth/token.guard';
+import { createUserInput, updateUserInput } from '../custom_models/mutation.model';
+import { CollectionService } from '../collection/collection.service';
+import { TokenGuard, TokenSecretGuard } from '../auth/token.guard';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { log } from 'console';
 

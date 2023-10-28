@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../_prisma/prisma.service';
 import { users, Prisma } from '@prisma/client';
 import { User } from './user.model';
-import { updateUserInput } from 'src/custom_models/mutation.model';
+import { updateUserInput } from '../custom_models/mutation.model';
 import { log } from 'console';
 import { Redis } from 'ioredis';
 

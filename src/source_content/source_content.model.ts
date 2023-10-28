@@ -1,6 +1,6 @@
 import { Field, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-scalars';
-import { Post } from 'src/post/post.model';
+import { Post } from '../post/post.model';
 
 @ObjectType()
 export class SourceContent {

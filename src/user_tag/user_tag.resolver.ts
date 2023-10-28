@@ -1,8 +1,8 @@
 import { Args, Context, Int, Mutation, Resolver } from '@nestjs/graphql';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { UserTagService } from './user_tag.service';
 import { UserTag } from './user_tag.model';
-import { TokenGuard } from 'src/auth/token.guard';
+import { TokenGuard } from '../auth/token.guard';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 
 @Resolver()

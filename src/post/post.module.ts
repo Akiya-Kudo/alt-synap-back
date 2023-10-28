@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PostResolver } from './post.resolver';
 import { PostService } from './post.service';
-import { PrismaModule } from 'src/_prisma/prisma.module';
-import { AuthModule } from 'src/auth/auth.module';
-import { TagModule } from 'src/tag/tag.module';
-import { RedisModule } from 'src/_redis/redis.module';
+import { PrismaModule } from '../_prisma/prisma.module';
+import { AuthModule } from '../auth/auth.module';
+import { TagModule } from '../tag/tag.module';
+import { RedisModule } from '../_redis/redis.module';
 
 @Module({
     imports: [PrismaModule, AuthModule, TagModule, RedisModule],

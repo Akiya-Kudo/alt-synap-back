@@ -1,6 +1,6 @@
 import { Field, GraphQLISODateTime, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { Post } from 'src/post/post.model';
-import { Tag } from 'src/tag/tag.model';
+import { Post } from '../post/post.model';
+import { Tag } from '../tag/tag.model';
 
 @ObjectType()
 export class PostTag {

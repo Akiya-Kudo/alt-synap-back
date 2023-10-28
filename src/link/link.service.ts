@@ -1,8 +1,8 @@
 
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/_prisma/prisma.service';
+import { PrismaService } from '../_prisma/prisma.service';
 import { Link } from './link.model';
-import { createLinkInput } from 'src/custom_models/mutation.model';
+import { createLinkInput } from '../custom_models/mutation.model';
 import { Redis } from 'ioredis';
 
 

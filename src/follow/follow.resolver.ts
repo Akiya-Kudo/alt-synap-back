@@ -1,10 +1,10 @@
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { FollowService } from './follow.service';
 import { Follow } from './follow.model';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { log } from 'console';
-import { TokenGuard, TokenSecretGuard } from 'src/auth/token.guard';
+import { TokenGuard, TokenSecretGuard } from '../auth/token.guard';
 
 @Resolver()
 export class FollowResolver {

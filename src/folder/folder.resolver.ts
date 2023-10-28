@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { Args, Context, Int, Mutation, Resolver } from '@nestjs/graphql';
-import { TokenGuard } from 'src/auth/token.guard';
+import { TokenGuard } from '../auth/token.guard';
 import { Folder } from './folder.model';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { FolderService } from './folder.service';
-import { upsertFolderInput } from 'src/custom_models/mutation.model';
+import { upsertFolderInput } from '../custom_models/mutation.model';
 import { log } from 'console';
 
 @Resolver()

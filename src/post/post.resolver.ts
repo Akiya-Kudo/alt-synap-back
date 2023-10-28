@@ -1,11 +1,11 @@
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PostService } from './post.service';
-import { upsertArticlePostInput, upsertArticlePostOutput, upsertLinkPostInput, upsertLinkPostOutput } from 'src/custom_models/mutation.model';
+import { upsertArticlePostInput, upsertArticlePostOutput, upsertLinkPostInput, upsertLinkPostOutput } from '../custom_models/mutation.model';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
-import { TokenGuard, TokenSecretGuard } from 'src/auth/token.guard';
-import { AuthService } from 'src/auth/auth.service';
-import { TagService } from 'src/tag/tag.service';
-import { PostWithTagsAndUser } from 'src/custom_models/query.model';
+import { TokenGuard, TokenSecretGuard } from '../auth/token.guard';
+import { AuthService } from '../auth/auth.service';
+import { TagService } from '../tag/tag.service';
+import { PostWithTagsAndUser } from '../custom_models/query.model';
 import { Post } from './post.model';
 import { log } from 'console';
 import e from 'express';

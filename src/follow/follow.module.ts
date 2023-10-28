@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { FollowResolver } from './follow.resolver';
 import { FollowService } from './follow.service';
-import { PrismaModule } from 'src/_prisma/prisma.module';
-import { AuthModule } from 'src/auth/auth.module';
+import { PrismaModule } from '../_prisma/prisma.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [PrismaModule, AuthModule],

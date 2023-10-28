@@ -1,13 +1,13 @@
 import { Field, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { Collection } from 'src/collection/collection.model';
-import { Folder } from 'src/folder/folder.model';
-import { FolderPost } from 'src/folder_post/folder_post.model';
-import { Follow } from 'src/follow/follow.model';
-import { Like } from 'src/like/like.model';
-import { Link } from 'src/link/link.model';
-import { LinkCollection } from 'src/link_collection/link_collection.model';
-import { Post } from 'src/post/post.model';
-import { UserTag } from 'src/user_tag/user_tag.model';
+import { Collection } from '../collection/collection.model';
+import { Folder } from '../folder/folder.model';
+import { FolderPost } from '../folder_post/folder_post.model';
+import { Follow } from '../follow/follow.model';
+import { Like } from '../like/like.model';
+import { Link } from '../link/link.model';
+import { LinkCollection } from '../link_collection/link_collection.model';
+import { Post } from '../post/post.model';
+import { UserTag } from '../user_tag/user_tag.model';
 
 // modelでのnullableは一括してID以外にオプションとしてつけています。処理を記述していき、不具合が主じたらその度変更していきます。
 // リレーションを親に子のオブジェクトの配列を持たせることで表示させます。

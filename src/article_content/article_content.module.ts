@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ArticleContentResolver } from '../article_content/article_content.resolver';
 import { ArticleContentService } from '../article_content/article_content.service';
-import { PrismaModule } from 'src/_prisma/prisma.module';
+import { PrismaModule } from '../_prisma/prisma.module';
 
 @Module({
   imports: [PrismaModule],

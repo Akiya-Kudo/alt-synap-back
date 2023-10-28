@@ -1,7 +1,7 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
-import { Post } from "src/post/post.model";
-import { Tag } from "src/tag/tag.model";
-import { User } from "src/user/user.model";
+import { Post } from "../post/post.model";
+import { Tag } from "../tag/tag.model";
+import { User } from "../user/user.model";
 
 @ObjectType()
 export class PostWithTagsAndUser extends Post {

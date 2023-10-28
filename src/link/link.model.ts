@@ -1,6 +1,6 @@
 import { Field, GraphQLISODateTime, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { LinkCollection } from 'src/link_collection/link_collection.model';
-import { User } from 'src/user/user.model';
+import { LinkCollection } from '../link_collection/link_collection.model';
+import { User } from '../user/user.model';
 
 @ObjectType()
 export class Link {

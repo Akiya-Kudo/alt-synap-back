@@ -1,10 +1,10 @@
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { FolderPostService } from './folder_post.service';
 import { FolderPost } from './folder_post.model';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
-import { TokenGuard } from 'src/auth/token.guard';
-import { Folder } from 'src/folder/folder.model';
+import { TokenGuard } from '../auth/token.guard';
+import { Folder } from '../folder/folder.model';
 
 @Resolver()
 export class FolderPostResolver {
