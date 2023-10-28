@@ -13,9 +13,15 @@ const initializeApplication = async (): Promise<INestApplication> => {
   return cachedApp;
 };
 
-const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
+// const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
+//   const app = await initializeApplication();
+//   app.getHttpAdapter().getInstance().run(req, res);
+// });
+const server = createServer(async (req, res) => {
   const app = await initializeApplication();
-  app.getHttpAdapter().getInstance().run(req, res);
+  await app.init();
+  const handler = app.getHttpAdapter().getInstance();
+  handler(req, res);
 });
 
 export default server;

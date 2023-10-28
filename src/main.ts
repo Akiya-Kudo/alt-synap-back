@@ -10,14 +10,14 @@ async function bootstrap() {
     credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
   })
   const app = await NestFactory.create(AppModule);
-  // await app.enableCors({
-  //   origin: ["https://alt-synap-front.vercel.app", "https://tipsy-search.net", "http://localhost:3000"],
-  //   methods: 'POST,GET',
-  // })
-  app.enableCors({
-    origin: '*',
-    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
-  });
+  await app.enableCors({
+    origin: ["https://alt-synap-front.vercel.app", "https://tipsy-search.net", "http://localhost:3000"],
+    methods: 'POST,GET',
+  })
+  // app.enableCors({
+  //   origin: '*',
+  //   allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
+  // });
   await app.listen(4000);
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);
