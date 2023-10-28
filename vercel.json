@@ -6,16 +6,6 @@
             "use": "@vercel/node"
         }
     ],
-    "routes": [
-        {
-            "src": "/api/(.*)", 
-            "dest": "vercelHandler.ts" 
-        },
-        {
-            "src": "/(.*)",
-            "dest": "vercelHandler.ts"
-        }
-    ],
     "headers": [
         {
             "source": "/api/(.*)",
