@@ -1,8 +1,6 @@
 import { Field, ID, InputType, Int, ObjectType, PartialType } from '@nestjs/graphql';
-import { GraphQLJSONObject } from 'graphql-scalars';
-import { LinkCollection } from 'src/link_collection/link_collection.model';
-import { Post } from 'src/post/post.model';
-import { User } from 'src/user/user.model';
+import { LinkCollection } from '../link_collection/link_collection.model';
+import { User } from '../user/user.model';
 
 @ObjectType()
 export class Collection {

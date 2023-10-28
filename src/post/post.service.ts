@@ -1,12 +1,12 @@
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from 'src/_prisma/prisma.service';
-import { upsertArticlePostInput, upsertLinkPostInput } from 'src/custom_models/mutation.model';
+import { PrismaService } from '../_prisma/prisma.service';
+import { upsertArticlePostInput, upsertLinkPostInput } from '../custom_models/mutation.model';
 import {v4 as uuid_v4} from 'uuid'
 import { posts, Prisma } from '@prisma/client';
 import { Post } from './post.model';
 import { log } from 'console';
 import { Redis } from 'ioredis';
-import { Tag } from 'src/tag/tag.model';
+import { Tag } from '../tag/tag.model';
 
 @Injectable()
 export class PostService {

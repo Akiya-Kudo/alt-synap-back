@@ -1,6 +1,6 @@
 import { Field, GraphQLISODateTime, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { Post } from 'src/post/post.model';
-import { User } from 'src/user/user.model';
+import { Post } from '../post/post.model';
+import { User } from '../user/user.model';
 
 @ObjectType()
 export class Like {

@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/_prisma/prisma.service';
+import { PrismaService } from '../_prisma/prisma.service';
 import { Collection } from './collection.model';
 import { v4 as uuidv4 } from 'uuid';
 import { Redis } from 'ioredis';

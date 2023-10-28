@@ -21,6 +21,7 @@ import { FolderModule } from './folder/folder.module';
 import { FolderPostModule } from './folder_post/folder_post.module';
 import { UserTagModule } from './user_tag/user_tag.module';
 import { RedisModule } from './_redis/redis.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -29,6 +30,10 @@ import { RedisModule } from './_redis/redis.module';
       autoSchemaFile: join(process.cwd(), 'src/_graphql/schema.gql'),
       sortSchema: true,
     }),
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 10,
+    }]),
     UserModule,
     PostModule,
     ArticleContentModule,

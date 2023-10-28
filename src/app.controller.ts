@@ -8,8 +8,6 @@ import {
   Put,
 } from '@nestjs/common';
 import { UserService } from './user/user.service';
-import { users as UserModel, users } from '@prisma/client';
-import { createUserInput, updateUserInput } from 'src/custom_models/mutation.model';
 
 type profType = {
   firebase_id?: null | string;

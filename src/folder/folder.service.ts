@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/_prisma/prisma.service';
+import { PrismaService } from '../_prisma/prisma.service';
 import { AuthenticationError } from 'apollo-server-express';
-import { upsertFolderInput } from 'src/custom_models/mutation.model';
+import { upsertFolderInput } from '../custom_models/mutation.model';
 
 @Injectable()
 export class FolderService {

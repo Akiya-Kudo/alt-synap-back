@@ -1,6 +1,6 @@
 import { Field, GraphQLISODateTime, ID, InputType, Int, ObjectType, PartialType } from '@nestjs/graphql';
-import { FolderPost } from 'src/folder_post/folder_post.model';
-import { User } from 'src/user/user.model';
+import { FolderPost } from '../folder_post/folder_post.model';
+import { User } from '../user/user.model';
 
 @ObjectType()
 export class Folder {

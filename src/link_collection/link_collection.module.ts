@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { LinkCollectionResolver } from './link_collection.resolver';
 import { LinkCollectionService } from './link_collection.service';
-import { PrismaModule } from 'src/_prisma/prisma.module';
-import { RedisModule } from 'src/_redis/redis.module';
+import { PrismaModule } from '../_prisma/prisma.module';
+import { RedisModule } from '../_redis/redis.module';
 
 @Module({
   imports: [PrismaModule, RedisModule],

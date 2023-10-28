@@ -1,10 +1,10 @@
 import { Field, GraphQLISODateTime, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { ArticleContent } from 'src/article_content/article_content.model';
-import { FolderPost } from 'src/folder_post/folder_post.model';
-import { Like } from 'src/like/like.model';
-import { PostTag } from 'src/posts_tag/posts_tag.model';
-import { SourceContent } from 'src/source_content/source_content.model';
-import { User } from 'src/user/user.model';
+import { ArticleContent } from '../article_content/article_content.model';
+import { FolderPost } from '../folder_post/folder_post.model';
+import { Like } from '../like/like.model';
+import { PostTag } from '../posts_tag/posts_tag.model';
+import { SourceContent } from '../source_content/source_content.model';
+import { User } from '../user/user.model';
 
 @ObjectType()
 export class Post {

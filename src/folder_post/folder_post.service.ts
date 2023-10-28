@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AuthenticationError } from 'apollo-server-express';
 import { log } from 'console';
-import { PrismaService } from 'src/_prisma/prisma.service';
+import { PrismaService } from '../_prisma/prisma.service';
 
 @Injectable()
 export class FolderPostService {

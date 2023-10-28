@@ -1,10 +1,10 @@
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { LikeService } from './like.service';
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
-import { TokenGuard } from 'src/auth/token.guard';
+import { TokenGuard } from '../auth/token.guard';
 import { Like } from './like.model';
-import { AuthService } from 'src/auth/auth.service';
-import { Post } from 'src/post/post.model';
+import { AuthService } from '../auth/auth.service';
+import { Post } from '../post/post.model';
 
 @Resolver()
 export class LikeResolver {
