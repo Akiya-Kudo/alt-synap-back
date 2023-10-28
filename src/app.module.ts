@@ -30,6 +30,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
       // autoSchemaFile: join(process.cwd(), 'src/_graphql/schema.gql'),
       autoSchemaFile: true,
       sortSchema: true,
+      persistedQueries: false
     }),
     ThrottlerModule.forRoot([{
       ttl: 60000,
