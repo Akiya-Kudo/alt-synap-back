@@ -27,10 +27,9 @@ import { ThrottlerModule } from '@nestjs/throttler';
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      // autoSchemaFile: join(process.cwd(), 'src/_graphql/schema.gql'),
-      autoSchemaFile: true,
+      autoSchemaFile: join(process.cwd(), 'src/_graphql/schema.gql'),
+      // autoSchemaFile: true,
       sortSchema: true,
-      persistedQueries: false
     }),
     ThrottlerModule.forRoot([{
       ttl: 60000,
@@ -53,7 +52,5 @@ import { ThrottlerModule } from '@nestjs/throttler';
     UserTagModule,
     RedisModule,
   ],
-  // controllers: [AppController],
-  // providers: [AppService],
 })
 export class AppModule {}

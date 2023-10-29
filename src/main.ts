@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { PrismaService } from './_prisma/prisma.service';
 import * as serviceAccount from '../tipsy-firebase.json'
 import admin from "firebase-admin";
-import { log } from 'console';
 
 async function bootstrap() {
   admin.initializeApp({
@@ -12,7 +11,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   await app.enableCors({
     origin: ["https://alt-synap-front.vercel.app", "https://tipsy-search.net", "http://localhost:3000"],
-    methods: 'POST,GET',
+    methods: 'POST,GET,OPTION',
   })
   // app.enableCors({
   //   origin: '*',
