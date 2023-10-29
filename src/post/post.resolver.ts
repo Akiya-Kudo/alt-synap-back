@@ -104,7 +104,7 @@ export class PostResolver {
         }
     }
 
-    @Query(() => Number, { name: "count_total_posts" })
+    @Query(() => Int, { name: "count_total_posts" })
     async countTotalPosts(
         @Args('searchString', { nullable: true }) searchString: string,
         @Args('selectedTagId', { type: () => Int, nullable: true }) selectedTagId: number
