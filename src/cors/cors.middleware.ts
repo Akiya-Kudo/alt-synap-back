@@ -11,7 +11,7 @@ export class CorsMiddleware implements NestMiddleware {
     if (allowedOrigins.includes(requestOrigin)) {
       res.header('Access-Control-Allow-Origin', requestOrigin);
     }
-    res.header('Access-Control-Allow-Methods', 'POST');
+    res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.header(
       'Access-Control-Allow-Headers',
       'Origin, X-Requested-With, Content-Type, Accept',
