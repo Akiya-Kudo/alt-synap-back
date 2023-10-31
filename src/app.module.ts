@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 // import { AppController } from './app.controller';
 // import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -22,6 +22,7 @@ import { FolderPostModule } from './folder_post/folder_post.module';
 import { UserTagModule } from './user_tag/user_tag.module';
 import { RedisModule } from './_redis/redis.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { CorsMiddleware } from './cors/cors.middleware';
 
 @Module({
   imports: [
@@ -54,4 +55,9 @@ import { ThrottlerModule } from '@nestjs/throttler';
     RedisModule,
   ],
 })
-export class AppModule {}
+// export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CorsMiddleware).forRoutes('*');
+  }
+}
