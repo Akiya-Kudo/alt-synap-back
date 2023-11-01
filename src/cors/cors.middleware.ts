@@ -4,7 +4,7 @@ import { NextFunction } from "express";
 @Injectable()
 export class CorsMiddleware implements NestMiddleware {
   use(req: Request, res, next: NextFunction) {
-    const allowedOrigins = ["https://alt-synap-front.vercel.app", "https://tipsy-search.net", "http://localhost:3000"]
+    const allowedOrigins = ["https://alt-synap-front.vercel.app", "https://tipsy-search.net"]
     const  requestOrigin = req.headers['origin'] as string; 
 
     if (allowedOrigins.includes(requestOrigin)) {
